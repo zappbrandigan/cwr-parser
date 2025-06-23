@@ -1,0 +1,38 @@
+# Ignore TypeScript source files
+src/
+*.ts
+*.tsx
+
+# Ignore config files
+tsconfig.json
+tsconfig.*.json
+eslint*
+.prettier*
+.vscode/
+.nyc_output/
+coverage/
+
+# Ignore build scripts
+rollup.config.js
+webpack.config.js
+vite.config.ts
+babel.config.js
+
+# Ignore local/test files
+tests/
+test/
+__tests__/
+*.spec.ts
+*.test.ts
+*.log
+
+# Ignore project metadata
+.env
+.env.* 
+.npmignore
+.gitignore
+.git/
+
+# Ignore local development tools
+node_modules/
+dist/*.map

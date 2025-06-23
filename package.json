@@ -2,24 +2,25 @@
   "name": "cwr-parser",
   "version": "1.0.0",
   "description": "CWR v21/v22 file parser with OOP classes",
-  "main": "index.ts",
-  "private": true,
+  "main": "dist/index.js",
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/CWRParser.js",
+      "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     }
   },
   "scripts": {
     "build": "npx tsc"
   },
-  "dependencies": {
-    "fs": "^0.0.1-security",
-    "path": "^0.12.7"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/node": "^24.0.3",
     "typescript": "^5.8.3"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zappbrandigan/cwr-parser.git"
+  },
+  "files": ["dist"]
 }
