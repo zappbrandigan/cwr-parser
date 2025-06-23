@@ -78,7 +78,7 @@ The parser generates a hierarchical JSON structure:
 
 ```json
 {
-  "fileName": "sample.cwr",
+  "fileName": "sample.v21",
   "version": "02.10",
   "header": {
     "recordType": "HDR",
