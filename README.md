@@ -1,10 +1,10 @@
-# CWR Parser - Complete Node.js CWR v21/v22 File Parser
+# CWR Parser - Node.js CWR v21/v22 File Parser
 
 An Object-Oriented Programming solution for converting Common Works Registration (CWR) files in versions 2.1 and 2.2 format into structured JSON data.
 
 ## Features
 
-- **Complete CWR Support**: Handles all major CWR record types (HDR, GRH, GRT, NWR, REV, WRK, SPU, SPT, PWR, OWR, ALT, PER, REC, ORN, TRL)
+- **CWR Support**: Handles all major CWR record types (HDR, GRH, GRT, NWR, REV, WRK, SPU, SPT, PWR, OWR, ALT, PER, REC, ORN, TRL) (more to come)
 - **Version Support**: Compatible with CWR v2.1 and v2.2 formats
 - **OOP Design**: Clean, modular architecture with separate classes for each record type
 - **Field Validation**: Comprehensive field parsing and validation with configurable strictness (in progress)
