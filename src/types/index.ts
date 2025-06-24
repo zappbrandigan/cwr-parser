@@ -114,14 +114,6 @@ export interface CWRTransaction {
   originators: CWRParsedRecord<ORNData>[];
 }
 
-// Statistics
-export interface ParseStatistics {
-  totalRecords: number;
-  recordCounts: Record<string, number>;
-  errors: string[];
-  warnings: string[];
-}
-
 // --- RECORD SPECIFIC STRUCTURES ---
 
 export interface HDRData {
@@ -353,7 +345,7 @@ export interface ALTData {
   recordSequenceNumber: number;
   alternativeTitle: string;
   titleType: string | null;
-  languageCode: string | false;
+  languageCode: string | null;
 }
 
 // Wrapper types that include nested structures
