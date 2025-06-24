@@ -1,6 +1,6 @@
 {
   "name": "cwr-parser",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "CWR v21/v22 file parser with OOP classes",
   "main": "dist/index.js",
   "type": "module",
