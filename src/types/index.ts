@@ -340,7 +340,7 @@ export interface PERData {
 }
 
 export interface ALTData {
-  recordType: 'PER';
+  recordType: 'ALT';
   transactionSequenceNumber: number;
   recordSequenceNumber: number;
   alternativeTitle: string;
