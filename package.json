@@ -18,7 +18,6 @@
   "scripts": {
     "build": "npx tsc"
   },
-  "dependencies": {},
   "devDependencies": {
     "@types/node": "^24.0.3",
     "typescript": "^5.8.3"

@@ -1,3 +1,26 @@
+import { EWTRecord } from "../records/EWTRecord";
+import { GRHRecord } from "../records/GRHRecord";
+import { GRTRecord } from "../records/GRTRecord";
+import { HDRRecord } from "../records/HDRRecord";
+import { NWRRecord } from "../records/NWRRecord";
+import { REVRecord } from "../records/REVRecord";
+import { EXCRecord } from "../records/EXCRecord";
+import { ISWRecord } from "../records/ISWRecord";
+import { SPURecord } from "../records/SPURecord";
+import { SPTRecord } from "../records/SPTRecord";
+import { SWTRecord } from "../records/SWTRecord";
+import { OPURecord } from "../records/OPURecord";
+import { OPTRecord } from "../records/OPTRecord";
+import { PWRRecord } from "../records/PWRRecord";
+import { OWRRecord } from "../records/OWRRecord";
+import { SWRRecord } from "../records/SWRRecord";
+import { ALTRecord } from "../records/ALTRecord";
+import { PERRecord } from "../records/PERRecord";
+import { RECRecord } from "../records/RECRecord";
+import { ORNRecord } from "../records/ORNRecord";
+import { VERRecord } from "../records/VERRecord";
+import { TRLRecord } from "../records/TRLRecord";
+
 export type RecordInstance =
   | InstanceType<typeof HDRRecord>
   | InstanceType<typeof GRHRecord>
@@ -29,6 +52,7 @@ export type RecordTypeKey =
 
 export type AllCWRData =
   | HDRData
+  | REVData
   | GRHData
   | NWRData
   | SPUData
@@ -139,22 +163,7 @@ export interface TRLData {
   recordCount: number;
 }
 
-// --- STATISTICS STRUCTURE ---
 
-export interface ParseStatistics {
-  totalRecords: number;
-  recordCounts: Partial<Record<RecordType, number>>;
-  errors: string[];
-  warnings: string[];
-  hasErrors: boolean;
-  hasWarnings: boolean;
-}
-
-export interface ValidationResult {
-  isValid: boolean;
-  errors: string[];
-  warnings: string[];
-}
 
 export interface NWRData {
   recordType: 'NWR';
@@ -186,6 +195,8 @@ export interface NWRData {
   catalogueNumber: string | null;
   priority: boolean;
 }
+
+export interface REVData extends NWRData {}
 
 export interface SPUData {
   recordType: 'SPU';
@@ -315,7 +326,7 @@ export interface RECData {
   firstReleaseDate: string | Date | null;
   constant: string | null;
   firstReleaseDuration: string | null;
-  constant: string | null;
+  constantTwo: string | null;
   firstAlbumTitle: string | null;
   firstAlbumLabel: string | null;
   firstReleaseCatalogNumber: string | null;
@@ -381,4 +392,21 @@ export interface CWRErrorJSON {
   code: string;
   details: CWRErrorDetails;
   stack?: string;
+}
+
+// --- STATISTICS STRUCTURE ---
+
+export interface ParseStatistics {
+  totalRecords: number;
+  recordCounts: Record<string, number>;
+  errors: string[];
+  warnings: string[];
+  hasErrors: boolean;
+  hasWarnings: boolean;
+}
+
+export interface ValidationResult {
+  isValid: boolean;
+  errors: string[];
+  warnings: string[];
 }

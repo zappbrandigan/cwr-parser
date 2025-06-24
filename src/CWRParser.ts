@@ -20,7 +20,7 @@ import { RECRecord } from './records/RECRecord';
 import { ORNRecord } from './records/ORNRecord';
 import { VERRecord } from './records/VERRecord';
 import { TRLRecord } from './records/TRLRecord';
-import { CWRError } from './utils/CWRError.js';
+import { CWRError } from './utils/CWRError';
 import { 
   CWRRecordOptions, 
   ParsedCWRFile, 
@@ -47,7 +47,9 @@ import {
   OWRData,
   PERData,
   RECData,
-} from './types/index.js';
+  NWRData,
+  REVData,
+} from './types';
 
 /**
  * Main CWR Parser class for parsing CWR v21 and v22 files
@@ -118,7 +120,7 @@ class CWRParser {
       statistics: null,
       metadata: {
         parsedAt: new Date().toISOString(),
-        parser: 'CWRParser v1.0.0'
+        parser: 'cwr-parser v1.0.2'
       }
     };
 
@@ -167,7 +169,9 @@ class CWRParser {
               // These are transaction records that start a new work
               if (currentGroup) {
                 currentTransaction = {
-                  header: record,
+                  header: record.recordType === 'NWR'
+                    ? (record as CWRParsedRecord<NWRData>)
+                    : (record as CWRParsedRecord<REVData>),
                   publishers: [],
                   otherPublishers: [],
                   writers: [],

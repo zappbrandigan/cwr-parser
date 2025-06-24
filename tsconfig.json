@@ -11,11 +11,12 @@
     "allowJs": true,
     "checkJs": false,
     "outDir": "./dist",
+    "rootDir": "./src",
     "noImplicitAny": true,
     "strictNullChecks": true,
     "declaration": true,
     "declarationMap": false,
-    "emitDeclarationOnly": false,
+    "emitDeclarationOnly": true,
   },
   "include": ["src/*", "src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
