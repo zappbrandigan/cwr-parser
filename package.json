@@ -12,6 +12,10 @@
     "./types": {
       "types": "./dist/types/index.d.ts",
       "default": "./dist/types/index.d.ts"
+    },
+    "./node": {
+      "import": "./dist/node/CWRParserNode.js",
+      "types": "./dist/node/CWRParserNode.d.ts"
     }
   },
   "types": "./dist/index.d.ts",
