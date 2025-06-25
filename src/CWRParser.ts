@@ -21,6 +21,7 @@ import { ORNRecord } from './records/ORNRecord';
 import { VERRecord } from './records/VERRecord';
 import { TRLRecord } from './records/TRLRecord';
 import { CWRError } from './utils/CWRError';
+import { AGRRecord } from './records/AGRRecord';
 import { 
   CWRRecordOptions, 
   ParsedCWRFile, 
@@ -64,7 +65,6 @@ class CWRParser {
       strictMode: options.strictMode || false,
       validateFields: options.validateFields || false,
       includeRawData: options.includeRawData || false,
-      includeFlatMap: options.includeFlatMap || false,
       ...options
     };
     
@@ -91,6 +91,7 @@ class CWRParser {
       ['REC', RECRecord],
       ['ORN', ORNRecord],
       ['VER', VERRecord],
+      ['AGR', AGRRecord],
     ]);
     
     this.statistics = {

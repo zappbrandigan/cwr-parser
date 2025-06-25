@@ -20,6 +20,9 @@ import { RECRecord } from "../records/RECRecord";
 import { ORNRecord } from "../records/ORNRecord";
 import { VERRecord } from "../records/VERRecord";
 import { TRLRecord } from "../records/TRLRecord";
+import { AGRRecord } from "../records/AGRRecord";
+import { TERRecord } from "../records/TERRecord";
+import { IPARecord } from "../records/IPARecord";
 
 export type RecordInstance =
   | InstanceType<typeof HDRRecord>
@@ -43,12 +46,16 @@ export type RecordInstance =
   | InstanceType<typeof RECRecord>
   | InstanceType<typeof ORNRecord>
   | InstanceType<typeof VERRecord>
+  | InstanceType<typeof AGRRecord>
+  | InstanceType<typeof TERRecord>
+  | InstanceType<typeof IPARecord>
   | InstanceType<typeof TRLRecord>;
 
 export type RecordTypeKey =
   | 'HDR' | 'GRH' | 'GRT' | 'EWT' | 'NWR' | 'REV' | 'EXC' | 'ISW'
   | 'SPU' | 'SPT' | 'SWT' | 'OPU' | 'OPT' | 'PWR' | 'OWR' | 'SWR'
-  | 'ALT' | 'PER' | 'REC' | 'ORN' | 'VER' | 'TRL';
+  | 'ALT' | 'PER' | 'REC' | 'ORN' | 'VER' | 'AGR' | 'IPA' | 'TER'
+  | 'TRL';
 
 export type AllCWRData =
   | HDRData
@@ -65,6 +72,9 @@ export type AllCWRData =
   | GRTData
   | ALTData
   | PERData
+  | AGRData
+  | TERData
+  | IPAData
   | RECData;
 
 export type RecordConstructor = new (options: CWRRecordOptions) => RecordInstance;
@@ -327,6 +337,12 @@ export interface RECData {
   recordingFormat: string | null;
   recordingTechnique: string | null;
   mediaType: string | null;
+  recordingTitle: string | null;
+  versionTitle: string | null;
+  displayArtist: string | null;
+  recordLabel: string | null;
+  irscValidity: string | null;
+  submitterRecordingId: string | null;
 }
 
 export interface PERData {
@@ -346,6 +362,55 @@ export interface ALTData {
   alternativeTitle: string;
   titleType: string | null;
   languageCode: string | null;
+}
+
+export interface AGRData {
+  recordType: 'AGR';
+  transactionSequenceNumber: number;
+  recordSequenceNumber: number;
+  submitterAgreementNumber: string;
+  isac: string | null;
+  agreementType: string | null;
+  agreementStartDate: string | null;
+  agreementEndDate: string | null;
+  retentionEndDate: string | null;
+  priorRoyaltyStatus: string | null;
+  priorRoyaltyStartDate: string | null;
+  postTermCollectionStatus: string | null;
+  signatureAgreementDate: string | null;
+  numberOfWorks: string | null;
+  salesClause: string | null;
+  sharesChange: string | null;
+  advanceGiven: string | null;
+  agreementNumber: string | null;
+}
+
+export interface IPAData {
+  recordType: 'IPA';
+  transactionSequenceNumber: number;
+  recordSequenceNumber: number;
+  includsionExclusionIndicator: string;
+  tisCode: string;
+  agreementRoleCode: string | null;
+  ipiNameNumber: string | null;
+  ipiBaseNumber: string | null;
+  ipNumber: string | null;
+  lastName: string | null;
+  firstName: string | null;
+  prSociety: string | null;
+  prShare: number | null;
+  mrSociety: string | null;
+  mrShare: number | null;
+  srSociety: string | null;
+  srShare: number | null;
+}
+
+export interface TERData {
+  recordType: 'TER';
+  transactionSequenceNumber: number;
+  recordSequenceNumber: number;
+  includsionExclusionIndicator: string | null;
+  tisCode: string | null;
 }
 
 // Wrapper types that include nested structures

@@ -25,7 +25,13 @@ class RECRecord extends CWRRecord {
       { name: 'isrc', type: 'string', length: 12, required: false },
       { name: 'recordingFormat', type: 'string', length: 1, required: false },
       { name: 'recordingTechnique', type: 'string', length: 1, required: false },
-      { name: 'mediaType', type: 'string', length: 3, required: false }
+      { name: 'mediaType', type: 'string', length: 3, required: false },
+      { name: 'recordingTitle', type: 'string', length: 60, required: false }, // start v2.2
+      { name: 'versionTitle', type: 'string', length: 60, required: false },
+      { name: 'displayArtist', type: 'string', length: 60, required: false },
+      { name: 'recordLabel', type: 'string', length: 60, required: false },
+      { name: 'isrcValidity', type: 'string', length: 20, required: false },
+      { name: 'submitterRecordingId', type: 'string', length: 14, required: false }
     ];
   }
 }

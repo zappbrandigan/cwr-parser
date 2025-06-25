@@ -19,7 +19,7 @@ class PWRRecord extends CWRRecord {
       { name: 'submitterAgreementNumber', type: 'string', length: 14, required: false },
       { name: 'societyAssignedAgreementNumber', type: 'string', length: 14, required: false },
       { name: 'writerIpNumber', type: 'string', length: 9, required: true },
-      { name: 'publisherSequenceNumber', type: 'number', length: 2, required: true },
+      { name: 'publisherSequenceNumber', type: 'number', length: 2, required: true }, // v2.2
     ];
   }
 }
