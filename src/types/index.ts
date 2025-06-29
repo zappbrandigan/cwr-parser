@@ -89,26 +89,33 @@ export type AllCWRData =
   | GRHData
   | GRTData
   | TRLData
+  | AGRData
   | NWRData
   | REVData
-  | SPUData
-  | SPTData
-  | SWRData
-  | SWTData
-  | PWRData
-  | ORNData
-  | OPUData
-  | OPTData
-  | OWRData
-  | OWTData
-  | ALTData
-  | PERData
-  | AGRData
+  | ISWData
+  | EXCData
+  | ACKData
   | TERData
   | IPAData
+  | NPAData
+  | SPUData
+  | OPUData
+  | NPNData
+  | SPTData
+  | OPTData
+  | SWRData
+  | OWRData
+  | NWNData
+  | SWTData
+  | OWTData
+  | PWRData
+  | ALTData
+  | NATData
   | EWTData
   | VERData
-  | RECData;
+  | PERData
+  | RECData
+  | ORNData;
 
 export type RecordConstructor = new (
   options: CWRRecordOptions
@@ -246,7 +253,7 @@ interface WorkData {
   copyrightDate: string;
   copyrightNumber: string | null;
   musicalWorkDistributionCategory: string;
-  durationOfWork: string | null;
+  duration: string | null;
   recordedIndicator: string | null;
   textMusicRelationship: string;
   compositeType: string | null;
@@ -258,12 +265,12 @@ interface WorkData {
   contactId: string | null;
   cwrWorkType: string;
   grandRightsIndicator: string;
-  compositeComponentType: string;
-  publicationDate: string | null;
+  compositeComponentCount: number;
+  printedPublicationDate: string | null;
   exceptionalClause: string;
   opusNumber: string | null;
   catalogueNumber: string | null;
-  priority: boolean;
+  priorityFlag: string;
 }
 
 export interface NWRData extends WorkData {
@@ -282,16 +289,68 @@ export interface EXCData extends WorkData {
   recordType: 'EXC';
 }
 
+export interface ACKData {
+  recordType: 'ACK';
+  transactionSequenceNumber: number;
+  recordSequenceNumber: number;
+  creationDate: string;
+  creationTime: string;
+  originalGroupId: number;
+  originalTransactionSequence: number;
+  originalTransactionType: string;
+  creationTitle: string | null;
+  submitterCreationNumber: string | null;
+  recipientCreationNumber: string | null;
+  processingDate: string;
+  transactionStatus: string;
+}
+
+export interface TERData {
+  recordType: 'TER';
+  transactionSequenceNumber: number;
+  recordSequenceNumber: number;
+  includsionExclusionIndicator: string | null;
+  tisCode: string | null;
+}
+
+export interface IPAData {
+  recordType: 'IPA';
+  transactionSequenceNumber: number;
+  recordSequenceNumber: number;
+  agreementRoleCode: string;
+  ipiNameNumber: string | null;
+  ipiBaseNumber: string | null;
+  interestedPartyNumber: string | null;
+  lastName: string | null;
+  firstName: string | null;
+  prAffiliationSociety: string | null;
+  prOwnershipShare: number | null;
+  mrAffiliationSociety: string | null;
+  mrOwnershipShare: number | null;
+  srAffiliationSociety: string | null;
+  srOwnershipShare: number | null;
+}
+
+export interface NPAData {
+  recordType: 'NPA';
+  transactionSequenceNumber: number;
+  recordSequenceNumber: number;
+  interestedPartyNumber: string;
+  lastName: string;
+  firstName: string;
+  languageCode: string | null;
+}
+
 interface PublisherData {
   transactionSequenceNumber: number;
   recordSequenceNumber: number;
   publisherSequenceNumber: number;
-  publisherIpNumber: string;
+  interestedPartyNumber: string;
   publisherName: string;
   publisherUnknownIndicator: string;
   publisherType: string;
   publisherTaxId: string | null;
-  publisherIpiNameNumber: string;
+  ipiNameNumber: string;
   submitterAgreementNumber: string | null;
   prAffiliationSocietyNumber: string;
   prOwnershipShare: number;
@@ -301,8 +360,7 @@ interface PublisherData {
   srOwnershipShare: number;
   specialAgreementsIndicator: string | null;
   firstRecordingRefusalIndicator: boolean;
-  filler: string;
-  publisherIpBase: string | null;
+  ipiBaseNumber: string | null;
   isac: string | null;
   societyAssignedAgreementNumber: string | null;
   agreementType: string | null;
@@ -317,26 +375,37 @@ export interface OPUData extends PublisherData {
   recordType: 'OPU';
 }
 
+export interface NPNData {
+  recordType: 'NPN';
+  transactionSequenceNumber: number;
+  recordSequenceNumber: number;
+  sequenceNumber: number;
+  interestedPartyNumber: string;
+  publisherName: string;
+  languageCode: string | null;
+}
+
 interface TerritoryData {
   transactionSequenceNumber: string | number;
   recordSequenceNumber: string | number;
-  publisherIpNumber: string;
-  constant: string;
-  prCollectionShare: string | number;
-  mrCollectionShare: string | number;
-  srCollectionShare: string | number;
+  interestedPartyNumber: string;
+  prCollectionShare: number;
+  mrCollectionShare: number;
+  srCollectionShare: number;
   inclusionExclusionIndicator: string;
   tisCode: string;
-  sharesChange: string | boolean;
-  sequenceNumber: string | number;
+  sharesChange: string | null;
+  sequenceNumber: number;
 }
 
 export interface SPTData extends TerritoryData {
   recordType: 'SPT';
+  constant: string;
 }
 
 export interface OPTData extends TerritoryData {
   recordType: 'OPT';
+  constant: string;
 }
 
 export interface SWTData extends TerritoryData {
@@ -350,26 +419,26 @@ export interface OWTData extends TerritoryData {
 interface WorkWriterData {
   transactionSequenceNumber: number;
   recordSequenceNumber: number;
-  writerIpNumber: string;
+  interestedPartyNumber: string;
   writerLastName: string;
   writerFirstName: string;
   writerUnknownIndicator: string | null;
   writerDesignationCode: string;
   taxIdNumber: string | null;
-  writerIPINameNumber: string;
-  prSocietyNumber: string;
+  ipiNameNumber: string;
+  prAffiliationSocietyNumber: string;
   prOwnershipShare: number;
-  mrSocietyNumber: string | null;
+  mrAffiliationSocietyNumber: string | null;
   mrOwnershipShare: number | null;
-  srSocietyNumber: string | null;
+  srAffiliationSocietyNumber: string | null;
   srOwnershipShare: number | null;
   reversionaryIndicator: string | null;
   firstRecordingRefusalInd: string;
   workForHireIndicator: string | null;
-  writerTaxId: string | null;
-  writerIpiBaseNumber: string | null;
-  personalNumber: string;
-  usaLicenseInd: string | null;
+  filler: string | null;
+  ipiBaseNumber: string | null;
+  personalNumber: string | null;
+  usaLicenseIndicator: string | null;
 }
 
 export interface SWRData extends WorkWriterData {
@@ -380,62 +449,26 @@ export interface OWRData extends WorkWriterData {
   recordType: 'OWR';
 }
 
+export interface NWNData {
+  recordType: 'NWN';
+  transactionSequenceNumber: number;
+  recordSequenceNumber: number;
+  interestedPartyNumber: string;
+  writerLastName: string;
+  writerFirstName: string;
+  languageCode: string | null;
+}
+
 export interface PWRData {
   recordType: 'PWR';
   transactionSequenceNumber: number;
   recordSequenceNumber: number;
-  publisherIpNumber: string;
+  publisherInterestedPartyNumber: string;
   publisherName: string;
   submitterAgreementNumber: string | null;
   societyAssignedAgreementNumber: string | null;
-  writerIpNumber: string;
+  writerInterestedPartyNumber: string;
   publisherSequenceNumber: string;
-}
-
-export interface ORNData {
-  recordType: 'ORN';
-  transactionSequenceNumber: number;
-  recordSequenceNumber: number;
-  intendedPurpose: string;
-  productionTitle: string;
-  cdIdentifier: string | null;
-  cutNumber: number | null;
-  library: string | null;
-  bltvr: string | null;
-  vIsanVersion: string | null;
-  vIsanIsan: string | null;
-  vIsanEpisode: string | null;
-  checkDigit: string | null;
-  productionNumber: string | null;
-  episodeTitle: string | null;
-  episodeNumber: string | null;
-  productionYear: string;
-  aviSocietyCode: string;
-  audioVisualNumber: string | null;
-}
-
-export interface RECData {
-  recordType: 'REC';
-  transactionSequenceNumber: number;
-  recordSequenceNumber: number;
-  firstReleaseDate: string | Date | null;
-  constant: string | null;
-  firstReleaseDuration: string | null;
-  constantTwo: string | null;
-  firstAlbumTitle: string | null;
-  firstAlbumLabel: string | null;
-  firstReleaseCatalogNumber: string | null;
-  ean: string | null;
-  isrc: string | null;
-  recordingFormat: string | null;
-  recordingTechnique: string | null;
-  mediaType: string | null;
-  recordingTitle: string | null;
-  versionTitle: string | null;
-  displayArtist: string | null;
-  recordLabel: string | null;
-  irscValidity: string | null;
-  submitterRecordingId: string | null;
 }
 
 export interface ALTData {
@@ -447,32 +480,13 @@ export interface ALTData {
   languageCode: string | null;
 }
 
-export interface IPAData {
-  recordType: 'IPA';
+export interface NATData {
+  recordType: 'NAT';
   transactionSequenceNumber: number;
   recordSequenceNumber: number;
-  includsionExclusionIndicator: string;
-  tisCode: string;
-  agreementRoleCode: string | null;
-  ipiNameNumber: string | null;
-  ipiBaseNumber: string | null;
-  ipNumber: string | null;
-  lastName: string | null;
-  firstName: string | null;
-  prSociety: string | null;
-  prShare: number | null;
-  mrSociety: string | null;
-  mrShare: number | null;
-  srSociety: string | null;
-  srShare: number | null;
-}
-
-export interface TERData {
-  recordType: 'TER';
-  transactionSequenceNumber: number;
-  recordSequenceNumber: number;
-  includsionExclusionIndicator: string | null;
-  tisCode: string | null;
+  workTitle: string;
+  titleType: string | null;
+  languageCode: string | null;
 }
 
 interface VersionData {
@@ -491,12 +505,12 @@ interface VersionData {
   submitterWorkNumber: string | null;
 }
 
-export interface VERData extends VersionData {
-  recordType: 'VER';
-}
-
 export interface EWTData extends VersionData {
   recordType: 'EWT';
+}
+
+export interface VERData extends VersionData {
+  recordType: 'VER';
 }
 
 export interface PERData {
@@ -505,8 +519,58 @@ export interface PERData {
   recordSequenceNumber: number;
   artistLastName: string;
   artistFirstName: string | null;
-  interestedPartyIpiNameNumber: string | null;
-  interestedPartyIpiBaseNumber: string | null;
+  ipiNameNumber: string | null;
+  ipiBaseNumber: string | null;
+}
+
+export interface RECData {
+  recordType: 'REC';
+  transactionSequenceNumber: number;
+  recordSequenceNumber: number;
+  firstReleaseDate: string | null;
+  constant: string | null;
+  firstReleaseDuration: string | null;
+  filler: string | null;
+  firstAlbumTitle: string | null;
+  firstAlbumLabel: string | null;
+  firstReleaseCatalogNumber: string | null;
+  ean: string | null;
+  isrc: string | null;
+  recordingFormat: string | null;
+  recordingTechnique: string | null;
+  mediaType: string | null;
+  recordingTitle: string | null;
+  versionTitle: string | null;
+  displayArtist: string | null;
+  recordLabel: string | null;
+  irscValidity: string | null;
+  submitterRecordingId: string | null;
+}
+
+export interface ORNData {
+  recordType: 'ORN';
+  transactionSequenceNumber: number;
+  recordSequenceNumber: number;
+  intendedPurpose: string;
+  productionTitle: string;
+  cdIdentifier: string | null;
+  cutNumber: number | null;
+  library: string | null;
+  bltvr: string | null;
+  filler: string | null;
+  productionNumber: string | null;
+  episodeTitle: string | null;
+  episodeNumber: string | null;
+  productionYear: string;
+  aviSocietyCode: string;
+  audioVisualNumber: string | null;
+  vIsan: string | null;
+  vIsanEpisode: string | null;
+  checkDigitOne: string | null;
+  vIsanVersion: string | null;
+  checkDigitTwo: string | null;
+  eidr: string | null;
+  eidrCheckDigit: string | null;
 }
 
 // Wrapper types that include nested structures

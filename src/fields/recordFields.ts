@@ -322,7 +322,7 @@ const workHeaderFields: FieldDefinition[] = [
 const publisherFields: FieldDefinition[] = [
   ...recordFieldPrefix,
   {
-    name: 'sequenceNumber',
+    name: 'publisherSequenceNumber',
     type: 'numeric',
     length: 2,
     required: true,
@@ -487,8 +487,7 @@ const publisherTerritoryFields: FieldDefinition[] = [
     length: 1,
     required: false,
     title: 'Shares Change',
-    description:
-      "Set to 'Y' if writer shares change in this territory (optional)",
+    description: "Set to 'Y' if writer shares change in this territory",
   },
   {
     // v2.1
@@ -1359,7 +1358,7 @@ export const recordFields: Record<RecordTypeKey, FieldDefinition[]> = {
     },
     {
       // v2.2
-      name: 'sequenceNumber',
+      name: 'publisherSequenceNumber',
       type: 'numeric',
       length: 2,
       required: true,
