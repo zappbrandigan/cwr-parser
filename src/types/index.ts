@@ -1,28 +1,28 @@
-import { EWTRecord } from "../records/EWTRecord";
-import { GRHRecord } from "../records/GRHRecord";
-import { GRTRecord } from "../records/GRTRecord";
-import { HDRRecord } from "../records/HDRRecord";
-import { NWRRecord } from "../records/NWRRecord";
-import { REVRecord } from "../records/REVRecord";
-import { EXCRecord } from "../records/EXCRecord";
-import { ISWRecord } from "../records/ISWRecord";
-import { SPURecord } from "../records/SPURecord";
-import { SPTRecord } from "../records/SPTRecord";
-import { SWTRecord } from "../records/SWTRecord";
-import { OPURecord } from "../records/OPURecord";
-import { OPTRecord } from "../records/OPTRecord";
-import { PWRRecord } from "../records/PWRRecord";
-import { OWRRecord } from "../records/OWRRecord";
-import { SWRRecord } from "../records/SWRRecord";
-import { ALTRecord } from "../records/ALTRecord";
-import { PERRecord } from "../records/PERRecord";
-import { RECRecord } from "../records/RECRecord";
-import { ORNRecord } from "../records/ORNRecord";
-import { VERRecord } from "../records/VERRecord";
-import { TRLRecord } from "../records/TRLRecord";
-import { AGRRecord } from "../records/AGRRecord";
-import { TERRecord } from "../records/TERRecord";
-import { IPARecord } from "../records/IPARecord";
+import { EWTRecord } from '../records/EWTRecord';
+import { GRHRecord } from '../records/GRHRecord';
+import { GRTRecord } from '../records/GRTRecord';
+import { HDRRecord } from '../records/HDRRecord';
+import { NWRRecord } from '../records/NWRRecord';
+import { REVRecord } from '../records/REVRecord';
+import { EXCRecord } from '../records/EXCRecord';
+import { ISWRecord } from '../records/ISWRecord';
+import { SPURecord } from '../records/SPURecord';
+import { SPTRecord } from '../records/SPTRecord';
+import { SWTRecord } from '../records/SWTRecord';
+import { OPURecord } from '../records/OPURecord';
+import { OPTRecord } from '../records/OPTRecord';
+import { PWRRecord } from '../records/PWRRecord';
+import { OWRRecord } from '../records/OWRRecord';
+import { SWRRecord } from '../records/SWRRecord';
+import { ALTRecord } from '../records/ALTRecord';
+import { PERRecord } from '../records/PERRecord';
+import { RECRecord } from '../records/RECRecord';
+import { ORNRecord } from '../records/ORNRecord';
+import { VERRecord } from '../records/VERRecord';
+import { TRLRecord } from '../records/TRLRecord';
+import { AGRRecord } from '../records/AGRRecord';
+import { TERRecord } from '../records/TERRecord';
+import { IPARecord } from '../records/IPARecord';
 
 export type RecordInstance =
   | InstanceType<typeof HDRRecord>
@@ -52,32 +52,66 @@ export type RecordInstance =
   | InstanceType<typeof TRLRecord>;
 
 export type RecordTypeKey =
-  | 'HDR' | 'GRH' | 'GRT' | 'EWT' | 'NWR' | 'REV' | 'EXC' | 'ISW'
-  | 'SPU' | 'SPT' | 'SWT' | 'OPU' | 'OPT' | 'PWR' | 'OWR' | 'SWR'
-  | 'ALT' | 'PER' | 'REC' | 'ORN' | 'VER' | 'AGR' | 'IPA' | 'TER'
-  | 'TRL';
+  | 'HDR'
+  | 'GRH'
+  | 'GRT'
+  | 'TRL'
+  | 'AGR'
+  | 'NWR'
+  | 'REV'
+  | 'ISW'
+  | 'EXC'
+  | 'ACK'
+  | 'TER'
+  | 'IPA'
+  | 'NPA'
+  | 'SPU'
+  | 'OPU'
+  | 'NPN'
+  | 'SPT'
+  | 'OPT'
+  | 'SWR'
+  | 'OWR'
+  | 'NWN'
+  | 'SWT'
+  | 'OWT'
+  | 'PWR'
+  | 'ALT'
+  | 'NAT'
+  | 'EWT'
+  | 'VER'
+  | 'PER'
+  | 'REC'
+  | 'ORN';
 
 export type AllCWRData =
   | HDRData
-  | REVData
   | GRHData
+  | GRTData
+  | TRLData
   | NWRData
+  | REVData
   | SPUData
   | SPTData
   | SWRData
   | SWTData
   | PWRData
   | ORNData
-  | TRLData
-  | GRTData
+  | OPUData
+  | OPTData
+  | OWRData
   | ALTData
   | PERData
   | AGRData
   | TERData
   | IPAData
+  | EWTData
+  | VERData
   | RECData;
 
-export type RecordConstructor = new (options: CWRRecordOptions) => RecordInstance;
+export type RecordConstructor = new (
+  options: CWRRecordOptions
+) => RecordInstance;
 
 /** Map of record type string to record constructor */
 export type RecordTypesMap = Map<RecordTypeKey, RecordConstructor>;
@@ -104,6 +138,16 @@ export interface ParsedCWRFile {
   };
 }
 
+export interface CWRConverterRecord {
+  fileName: string;
+  version: string | null;
+  lines: CWRParsedRecord<Map<string, string>>[];
+  statistics: ParseStatistics | null;
+  meatadata: {
+    parsedAt: string;
+  };
+}
+
 // Group structure
 export interface CWRGroup {
   header: CWRParsedRecord<GRHData>;
@@ -115,13 +159,15 @@ export interface CWRGroup {
 export interface CWRTransaction {
   header: CWRParsedRecord<NWRData | REVData>;
   publishers: CWRPublisher[];
-  otherPublishers: CWRParsedRecord<OPUData>[];
+  otherPublishers: CWROtherPublisher[];
   writers: CWRWriter[];
   otherWriters: CWRParsedRecord<OWRData>[];
   alternativeTitles: CWRParsedRecord<ALTData>[];
   performers: CWRParsedRecord<PERData>[];
   recordings: CWRParsedRecord<RECData>[];
   originators: CWRParsedRecord<ORNData>[];
+  workTitles: CWRParsedRecord<EWTData>[];
+  versions: CWRParsedRecord<VERData>[];
 }
 
 // --- RECORD SPECIFIC STRUCTURES ---
@@ -136,8 +182,8 @@ export interface HDRData {
   creationTime: string;
   transmissionDate: string;
   characterSet: string | null;
-  cwrVersion: string | null;
-  cwrRevision: string | null;
+  version: string | null;
+  revision: string | null;
   softwarePackage: string | null;
   softwarePackageVersion: string | null;
 }
@@ -145,18 +191,20 @@ export interface HDRData {
 export interface GRHData {
   recordType: 'GRH';
   transactionType: string;
-  groupId: string;
+  groupId: number;
   versionNumber: string;
-  batchRequestId: string;
-  distType: string | null;
+  batchRequestId: number | null;
+  distributionType: string | null;
 }
 
 export interface GRTData {
   recordType: 'GRT';
-  // Fill in if needed
+  groupId: number;
+  transactionCount: number;
+  recordCount: number;
+  currencyIndicator: string | null;
+  monetaryValue: number | null;
 }
-
-// --- TRAILER RECORD ---
 
 export interface TRLData {
   recordType: 'TRL';
@@ -165,10 +213,29 @@ export interface TRLData {
   recordCount: number;
 }
 
+export interface AGRData {
+  recordType: 'AGR';
+  transactionSequenceNumber: number;
+  recordSequenceNumber: number;
+  submitterAgreementNumber: string;
+  isac: string | null;
+  agreementType: string;
+  agreementStartDate: string | null;
+  agreementEndDate: string | null;
+  retentionEndDate: string | null;
+  priorRoyaltyStatus: string | null;
+  priorRoyaltyStartDate: string | null;
+  postTermCollectionStatus: string;
+  postTermCollectionEndDate: string | null;
+  signatureAgreementDate: string | null;
+  numberOfWorks: number;
+  salesClause: string | null;
+  sharesChange: string | null;
+  advanceGiven: string | null;
+  societyAssignedAgreementNumber: string | null;
+}
 
-
-export interface NWRData {
-  recordType: 'NWR';
+interface WorkData {
   transactionSequenceNumber: number;
   recordSequenceNumber: number;
   workTitle: string;
@@ -198,10 +265,23 @@ export interface NWRData {
   priority: boolean;
 }
 
-export interface REVData extends NWRData {}
+export interface NWRData extends WorkData {
+  recordType: 'NWR';
+}
 
-export interface SPUData {
-  recordType: 'SPU';
+export interface REVData extends WorkData {
+  recordType: 'REV';
+}
+
+export interface ISWData extends WorkData {
+  recordType: 'ISW';
+}
+
+export interface EXCData extends WorkData {
+  recordType: 'EXC';
+}
+
+interface PublisherData {
   transactionSequenceNumber: number;
   recordSequenceNumber: number;
   publisherSequenceNumber: number;
@@ -228,25 +308,41 @@ export interface SPUData {
   usaLicenseIndicator: string;
 }
 
-export interface OPUData extends SPUData {};
+export interface SPUData extends PublisherData {
+  recordType: 'SPU';
+}
 
-export interface SPTData {
-  recordType: 'SPT';
+export interface OPUData extends PublisherData {
+  recordType: 'OPU';
+}
+
+interface TerritoryData {
   transactionSequenceNumber: string | number;
-  recordSequenceNumber: string |number;
+  recordSequenceNumber: string | number;
   publisherIpNumber: string;
   constant: string;
   prCollectionShare: string | number;
   mrCollectionShare: string | number;
-  srCollectionShare: string |number;
+  srCollectionShare: string | number;
   inclusionExclusionIndicator: string;
   tisCode: string;
   sharesChange: string | boolean;
-  sequenceNumber: string |number;
+  sequenceNumber: string | number;
 }
 
-export interface SWRData {
-  recordType: 'SWR';
+export interface SPTData extends TerritoryData {
+  recordType: 'SPT';
+}
+
+export interface OPTData extends TerritoryData {
+  recordType: 'OPT';
+}
+
+export interface SWTData extends TerritoryData {
+  recordType: 'SWT';
+}
+
+interface WorkWriterData {
   transactionSequenceNumber: number;
   recordSequenceNumber: number;
   writerIpNumber: string;
@@ -271,20 +367,12 @@ export interface SWRData {
   usaLicenseInd: string | null;
 }
 
-export interface OWRData extends SWRData {};
+export interface SWRData extends WorkWriterData {
+  recordType: 'SWR';
+}
 
-export interface SWTData {
-  recordType: 'SWT';
-  transactionSequenceNumber: number;
-  recordSequenceNumber: number;
-  writerIpNumber: string;
-  prCollectionShare: number;
-  mrCollectionShare: number | null;
-  srCollectionShare: number | null;
-  inclusionExclusionIndicator: string;
-  tisCode: string;
-  sharesChange: boolean;
-  sequenceNumber: number;
+export interface OWRData extends WorkWriterData {
+  recordType: 'OWR';
 }
 
 export interface PWRData {
@@ -306,7 +394,7 @@ export interface ORNData {
   intendedPurpose: string;
   productionTitle: string;
   cdIdentifier: string | null;
-  cutNumber: string;
+  cutNumber: number | null;
   library: string | null;
   bltvr: string | null;
   vIsanVersion: string | null;
@@ -324,7 +412,7 @@ export interface ORNData {
 export interface RECData {
   recordType: 'REC';
   transactionSequenceNumber: number;
-  recordSequenceNumber: number; 
+  recordSequenceNumber: number;
   firstReleaseDate: string | Date | null;
   constant: string | null;
   firstReleaseDuration: string | null;
@@ -364,27 +452,6 @@ export interface ALTData {
   languageCode: string | null;
 }
 
-export interface AGRData {
-  recordType: 'AGR';
-  transactionSequenceNumber: number;
-  recordSequenceNumber: number;
-  submitterAgreementNumber: string;
-  isac: string | null;
-  agreementType: string | null;
-  agreementStartDate: string | null;
-  agreementEndDate: string | null;
-  retentionEndDate: string | null;
-  priorRoyaltyStatus: string | null;
-  priorRoyaltyStartDate: string | null;
-  postTermCollectionStatus: string | null;
-  signatureAgreementDate: string | null;
-  numberOfWorks: string | null;
-  salesClause: string | null;
-  sharesChange: string | null;
-  advanceGiven: string | null;
-  agreementNumber: string | null;
-}
-
 export interface IPAData {
   recordType: 'IPA';
   transactionSequenceNumber: number;
@@ -413,9 +480,47 @@ export interface TERData {
   tisCode: string | null;
 }
 
+interface VersionData {
+  transactionSequenceNumber: number;
+  recordSequenceNumber: number;
+  originalWorkTitle: string;
+  iswc: string | null;
+  writerOneLastName: string | null;
+  writerOneFirstName: string | null;
+  source: string | null;
+  writerOneIpiNameNumber: string | null;
+  writerOneIpiBaseNumber: string | null;
+  writerTwoLastName: string | null;
+  writerTwoFirstName: string | null;
+  writerTwoIpiNameNumber: string | null;
+  submitterWorkNumber: string | null;
+}
+
+export interface VERData extends VersionData {
+  recordType: 'VER';
+}
+
+export interface EWTData extends VersionData {
+  recordType: 'EWT';
+}
+
+export interface PERData {
+  recordType: 'PER';
+  transactionSequenceNumber: number;
+  recordSequenceNumber: number;
+  artistLastName: string;
+  artistFirstName: string | null;
+  interestedPartyIpiNameNumber: string | null;
+  interestedPartyIpiBaseNumber: string | null;
+}
+
 // Wrapper types that include nested structures
 export interface CWRPublisher extends CWRParsedRecord<SPUData> {
   territories?: CWRParsedRecord<SPTData>[];
+}
+
+export interface CWROtherPublisher extends CWRParsedRecord<OPUData> {
+  territories?: CWRParsedRecord<OPTData>[];
 }
 
 export interface CWRWriter extends CWRParsedRecord<SWRData> {
@@ -423,20 +528,11 @@ export interface CWRWriter extends CWRParsedRecord<SWRData> {
   publishers?: CWRParsedRecord<PWRData>[];
 }
 
-
-export interface FieldDefinition {
-  name: string;
-  type: string;
-  length: number;
-  required?: boolean;
-  [key: string]: any; 
-}
-
 export interface CWRRecordOptions {
   strictMode?: boolean;
   validateFields?: boolean;
   includeRawData?: boolean;
-  [key: string]: any; 
+  [key: string]: any;
 }
 
 export interface CWRErrorDetails {
@@ -466,4 +562,21 @@ export interface ValidationResult {
   isValid: boolean;
   errors: string[];
   warnings: string[];
+}
+
+export interface FieldDefinition {
+  name: string;
+  type:
+    | 'string'
+    | 'numeric'
+    | 'date'
+    | 'time'
+    | 'flag'
+    | 'percentage'
+    | 'table';
+  length: number;
+  required: boolean;
+  title: string;
+  description: string;
+  [key: string]: any;
 }

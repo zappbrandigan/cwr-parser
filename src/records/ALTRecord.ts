@@ -1,6 +1,6 @@
 import { CWRRecordOptions } from '../types/index.js';
 import { CWRRecord } from './CWRRecord.js';
-import recordPrefix from './recordPrefix.js';
+import { recordFields } from '../fields/index.js';
 
 /**
  * Alternative Title Record (ALT) - Contains alternative work titles
@@ -12,12 +12,7 @@ class ALTRecord extends CWRRecord {
   }
 
   getFieldDefinitions() {
-    return [
-      ...recordPrefix,
-      { name: 'alternativeTitle', type: 'string', length: 60, required: true },
-      { name: 'titleType', type: 'string', length: 2, required: false },
-      { name: 'languageCode', type: 'string', length: 2, required: false }
-    ];
+    return recordFields['ALT'];
   }
 }
 

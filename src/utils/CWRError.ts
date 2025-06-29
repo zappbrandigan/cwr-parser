@@ -7,7 +7,7 @@ class CWRError extends Error {
   code: string;
   details: CWRErrorDetails;
   
-  constructor(message: string, code = 'CWR_ERROR', details: CWRErrorDetails = {}) {
+  constructor(message: string, code = 'ER', details: CWRErrorDetails = {}) {
     super(message);
     this.name = 'CWRError';
     this.code = code;

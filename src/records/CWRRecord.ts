@@ -14,7 +14,7 @@ class CWRRecord {
 
   constructor(options: CWRRecordOptions = {}) {
     this.options = options;
-    this.fieldParser = new FieldParser(options);
+    this.fieldParser = new FieldParser();
     this.recordType = '';
     this.fields = {};
     this.rawData = '';
@@ -28,6 +28,25 @@ class CWRRecord {
     return [];
   }
 
+  mapped(line: string): Map<string, string> {
+    this.rawData = line;
+    const definitions = this.getFieldDefinitions();
+    let position = 0;
+    const mappedRecord = new Map();
+
+    for (const fieldDef of definitions) {
+      const value = line.substring(position, position + fieldDef.length).trim();
+
+      try {
+        mappedRecord.set(fieldDef.name, value);
+      } catch (error: any) {
+        console.warn(error);
+      }
+      position += fieldDef.length;
+    }
+    return mappedRecord;
+  }
+
   /**
    * Parse raw CWR line data
    */
@@ -38,7 +57,7 @@ class CWRRecord {
 
     for (const fieldDef of definitions) {
       const value = line.substring(position, position + fieldDef.length);
-      
+
       try {
         this.fields[fieldDef.name] = this.fieldParser.parseField(
           value,
@@ -54,7 +73,7 @@ class CWRRecord {
         }
         this.fields[fieldDef.name] = fieldDef.required ? null : value.trim();
       }
-      
+
       position += fieldDef.length;
     }
 
@@ -71,11 +90,14 @@ class CWRRecord {
     if (!this.options.validateFields) return;
 
     const definitions = this.getFieldDefinitions();
-    
+
     for (const fieldDef of definitions) {
       const value = this.fields[fieldDef.name];
-      
-      if (fieldDef.required && (value === null || value === undefined || value === '')) {
+
+      if (
+        fieldDef.required &&
+        (value === null || value === undefined || value === '')
+      ) {
         throw new CWRError(
           `Required field '${fieldDef.name}' is missing or empty`,
           'VALIDATION_ERROR'
@@ -90,7 +112,7 @@ class CWRRecord {
   toJSON() {
     return {
       recordType: this.recordType,
-      ...this.fields
+      ...this.fields,
     };
   }
 
