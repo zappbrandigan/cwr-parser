@@ -69,6 +69,7 @@ class CWRParser {
       strictMode: options.strictMode || false,
       validateFields: options.validateFields || false,
       includeRawData: options.includeRawData || false,
+      convertCodes: options.convertCodes || false,
       ...options,
     };
 

@@ -596,6 +596,7 @@ export interface CWRRecordOptions {
   strictMode?: boolean;
   validateFields?: boolean;
   includeRawData?: boolean;
+  convertCodes?: boolean;
   [key: string]: any;
 }
 

@@ -14,7 +14,7 @@ class CWRRecord {
 
   constructor(options: CWRRecordOptions = {}) {
     this.options = options;
-    this.fieldParser = new FieldParser();
+    this.fieldParser = new FieldParser(options);
     this.recordType = '';
     this.fields = {};
     this.rawData = '';

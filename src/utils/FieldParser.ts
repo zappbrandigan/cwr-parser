@@ -1,14 +1,15 @@
-import { FieldDefinition } from '../types';
+import { territoryCodes } from '../tables/territoryCodes.js';
+import { CWRRecordOptions, FieldDefinition } from '../types';
 
 /**
  * Utility class for parsing CWR field values
  */
 class FieldParser {
-  // private options: CWRRecordOptions;
+  private options: CWRRecordOptions;
 
-  // constructor(options: CWRRecordOptions = {}) {
-  //   this.options = options;
-  // }
+  constructor(options: CWRRecordOptions = {}) {
+    this.options = options;
+  }
 
   /**
    * Parse field value based on type
@@ -30,7 +31,6 @@ class FieldParser {
     if (trimmed === '' && !fieldDef.required) {
       return null;
     }
-
     switch (type) {
       case 'string':
         return this.parseString(trimmed);
@@ -44,6 +44,9 @@ class FieldParser {
         return this.parseFlag(trimmed);
       case 'percentage':
         return this.parsePercentage(trimmed);
+      case 'table':
+        return this.parseTableLookup(trimmed, fieldDef.name);
+        break;
       default:
         return trimmed;
     }
@@ -164,6 +167,21 @@ class FieldParser {
 
     // Convert to decimal (e.g., 10000 = 100.00%)
     return num / 100;
+  }
+
+  /**
+   * Parse lookup table values
+   */
+  parseTableLookup(value: string, fieldName: string): string | number | null {
+    if (this.options.convertCodes) {
+      switch (fieldName) {
+        case 'tisCode':
+          return territoryCodes[Number(value) as keyof typeof territoryCodes];
+        default:
+          return value;
+      }
+    }
+    return value;
   }
 
   parseFieldRaw(value: string): string {
