@@ -8,11 +8,11 @@ import { CWRRecord } from './CWRRecord.js';
 class VERRecord extends CWRRecord {
   constructor(options: CWRRecordOptions = {}) {
     super(options);
-    this.recordType = 'PER';
+    this.recordType = 'VER';
   }
 
   getFieldDefinitions() {
-    return recordFields['PER'];
+    return recordFields['VER'];
   }
 }
 
