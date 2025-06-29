@@ -4,6 +4,20 @@
   "description": "CWR v21/v22 file parser with OOP classes",
   "type": "module",
   "main": "dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./types": {
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/types/index.d.ts"
+    },
+    "./node": {
+      "import": "./dist/node/CWRParserNode.js",
+      "types": "./dist/node/CWRParserNode.d.ts"
+    }
+  },
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
