@@ -2,28 +2,18 @@
   "name": "cwr-parser",
   "version": "1.0.6",
   "description": "CWR v21/v22 file parser with OOP classes",
-  "main": "dist/index.js",
   "type": "module",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    },
-    "./types": {
-      "types": "./dist/types/index.d.ts",
-      "default": "./dist/types/index.d.ts"
-    },
-    "./node": {
-      "import": "./dist/node/CWRParserNode.js",
-      "types": "./dist/node/CWRParserNode.d.ts"
-    }
-  },
+  "main": "dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "npx tsc"
+    "build": "tsc",
+    "dev": "ts-node src/index.ts",
+    "clean": "rm -rf dist"
   },
   "devDependencies": {
     "@types/node": "^24.0.3",
+    "prettier": "3.6.2",
+    "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
   "repository": {

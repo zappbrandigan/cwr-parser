@@ -3,17 +3,18 @@ import { CWRRecordOptions } from '../types/index.js';
 import { CWRRecord } from './CWRRecord.js';
 
 /**
- * Writer Controlled by Submitter (SWR) - Contains controlled writer information
+ * Non-Roman Alphabet Agreement Party Name (NPA) -  identifies names in a non-roman
+ * alphabet for the acquiring parties
  */
-class SWRRecord extends CWRRecord {
+class NPARecord extends CWRRecord {
   constructor(options: CWRRecordOptions = {}) {
     super(options);
-    this.recordType = 'SWR';
+    this.recordType = 'NPA';
   }
 
   getFieldDefinitions() {
-    return recordFields['SWR'];
+    return recordFields['NPA'];
   }
 }
 
-export { SWRRecord };
+export { NPARecord };

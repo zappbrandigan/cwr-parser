@@ -3,17 +3,17 @@ import { CWRRecordOptions } from '../types/index.js';
 import { CWRRecord } from './CWRRecord.js';
 
 /**
- * Writer Controlled by Submitter (SWR) - Contains controlled writer information
+ * Non-Roman Alphabet Publisher Name (NPN) - identifies publisher names in non-roman alphabets
  */
-class SWRRecord extends CWRRecord {
+class NPNRecord extends CWRRecord {
   constructor(options: CWRRecordOptions = {}) {
     super(options);
-    this.recordType = 'SWR';
+    this.recordType = 'NPN';
   }
 
   getFieldDefinitions() {
-    return recordFields['SWR'];
+    return recordFields['NPN'];
   }
 }
 
-export { SWRRecord };
+export { NPNRecord };

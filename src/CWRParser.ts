@@ -1,55 +1,58 @@
-import { HDRRecord } from './records/HDRRecord';
-import { GRHRecord } from './records/GRHRecord';
-import { GRTRecord } from './records/GRTRecord';
-import { EWTRecord } from './records/EWTRecord';
-import { NWRRecord } from './records/NWRRecord';
-import { REVRecord } from './records/REVRecord';
-import { EXCRecord } from './records/EXCRecord';
-import { ISWRecord } from './records/ISWRecord';
-import { SPURecord } from './records/SPURecord';
-import { SPTRecord } from './records/SPTRecord';
-import { SWTRecord } from './records/SWTRecord';
-import { OPURecord } from './records/OPURecord';
-import { OPTRecord } from './records/OPTRecord';
-import { PWRRecord } from './records/PWRRecord';
-import { OWRRecord } from './records/OWRRecord';
-import { SWRRecord } from './records/SWRRecord';
-import { ALTRecord } from './records/ALTRecord';
-import { PERRecord } from './records/PERRecord';
-import { RECRecord } from './records/RECRecord';
-import { ORNRecord } from './records/ORNRecord';
-import { VERRecord } from './records/VERRecord';
-import { TRLRecord } from './records/TRLRecord';
-import { CWRError } from './utils/CWRError';
-import { AGRRecord } from './records/AGRRecord';
-import { 
-  CWRRecordOptions, 
-  ParsedCWRFile, 
-  ParseStatistics, 
-  RecordTypesMap, 
-  CWRTransaction, 
-  CWRGroup, 
-  RecordTypeKey, 
-  CWRParsedRecord, 
-  AllCWRData, 
-  ValidationResult, 
-  HDRData, 
-  GRHData, 
-  GRTData, 
-  SPUData, 
-  OPUData, 
-  SPTData, 
-  PWRData, 
-  SWTData, 
-  ORNData, 
-  SWRData, 
-  ALTData, 
+import { HDRRecord } from './records/HDRRecord.js';
+import { GRHRecord } from './records/GRHRecord.js';
+import { GRTRecord } from './records/GRTRecord.js';
+import { EWTRecord } from './records/EWTRecord.js';
+import { NWRRecord } from './records/NWRRecord.js';
+import { REVRecord } from './records/REVRecord.js';
+import { EXCRecord } from './records/EXCRecord.js';
+import { ISWRecord } from './records/ISWRecord.js';
+import { SPURecord } from './records/SPURecord.js';
+import { SPTRecord } from './records/SPTRecord.js';
+import { SWTRecord } from './records/SWTRecord.js';
+import { OPURecord } from './records/OPURecord.js';
+import { OPTRecord } from './records/OPTRecord.js';
+import { PWRRecord } from './records/PWRRecord.js';
+import { OWRRecord } from './records/OWRRecord.js';
+import { SWRRecord } from './records/SWRRecord.js';
+import { ALTRecord } from './records/ALTRecord.js';
+import { PERRecord } from './records/PERRecord.js';
+import { RECRecord } from './records/RECRecord.js';
+import { ORNRecord } from './records/ORNRecord.js';
+import { VERRecord } from './records/VERRecord.js';
+import { TRLRecord } from './records/TRLRecord.js';
+import { AGRRecord } from './records/AGRRecord.js';
+import { CWRError } from './utils/CWRError.js';
+import {
+  CWRRecordOptions,
+  ParsedCWRFile,
+  ParseStatistics,
+  RecordTypesMap,
+  CWRTransaction,
+  CWRGroup,
+  RecordTypeKey,
+  CWRParsedRecord,
+  AllCWRData,
+  ValidationResult,
+  HDRData,
+  GRHData,
+  GRTData,
+  SPUData,
+  OPUData,
+  SPTData,
+  PWRData,
+  SWTData,
+  ORNData,
+  SWRData,
+  ALTData,
   TRLData,
   OWRData,
   PERData,
   RECData,
   NWRData,
   REVData,
+  VERData,
+  EWTData,
+  OPTData,
 } from './types';
 
 /**
@@ -59,15 +62,15 @@ class CWRParser {
   options: CWRRecordOptions;
   recordTypes: RecordTypesMap;
   statistics: ParseStatistics;
-  
+
   constructor(options: CWRRecordOptions = {}) {
     this.options = {
       strictMode: options.strictMode || false,
       validateFields: options.validateFields || false,
       includeRawData: options.includeRawData || false,
-      ...options
+      ...options,
     };
-    
+
     this.recordTypes = new Map([
       ['HDR', HDRRecord],
       ['GRH', GRHRecord],
@@ -93,7 +96,7 @@ class CWRParser {
       ['VER', VERRecord],
       ['AGR', AGRRecord],
     ]);
-    
+
     this.statistics = {
       totalRecords: 0,
       recordCounts: {},
@@ -104,14 +107,13 @@ class CWRParser {
     };
   }
 
-
   /**
    * Parse CWR data from string
    */
   parseString(data: string, fileName = 'unknown'): ParsedCWRFile {
     this.resetStatistics();
-    
-    const lines = data.split(/\r?\n/).filter(line => line.trim().length > 0);
+
+    const lines = data.split(/\r?\n/).filter((line) => line.trim().length > 0);
     const result: ParsedCWRFile = {
       fileName,
       version: null,
@@ -121,58 +123,63 @@ class CWRParser {
       statistics: null,
       metadata: {
         parsedAt: new Date().toISOString(),
-        parser: 'cwr-parser v1.0.2'
-      }
+        parser: 'cwr-parser v1.0.2',
+      },
     };
 
     let currentGroup: CWRGroup | null = null;
-    let currentTransaction : CWRTransaction | null= null;
+    let currentTransaction: CWRTransaction | null = null;
 
     try {
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
         const lineNumber = i + 1;
-        
-        
+
         try {
-          const record = this.parseLine(line, lineNumber) as CWRParsedRecord<AllCWRData>;
+          const record = this.parseLine(
+            line,
+            lineNumber
+          ) as CWRParsedRecord<AllCWRData>;
           if (!record) continue;
 
           this.updateStatistics(record);
-          
+
           // Process record based on type
           switch (record.recordType) {
             case 'HDR':
               result.header = record as CWRParsedRecord<HDRData>;
               break;
-              
+
             case 'GRH':
               if ('versionNumber' in record.data) {
-                result.version = (record as CWRParsedRecord<GRHData>).data.versionNumber;
+                result.version = (
+                  record as CWRParsedRecord<GRHData>
+                ).data.versionNumber;
               }
               currentGroup = {
                 header: record as CWRParsedRecord<GRHData>,
                 transactions: [],
-                trailer: null
+                trailer: null,
               };
               result.groups.push(currentGroup);
               currentTransaction = null;
               break;
-              
+
             case 'GRT':
               if (currentGroup) {
                 currentGroup.trailer = record as CWRParsedRecord<GRTData>;
               }
               break;
-              
+
             case 'NWR':
             case 'REV':
               // These are transaction records that start a new work
               if (currentGroup) {
                 currentTransaction = {
-                  header: record.recordType === 'NWR'
-                    ? (record as CWRParsedRecord<NWRData>)
-                    : (record as CWRParsedRecord<REVData>),
+                  header:
+                    record.recordType === 'NWR'
+                      ? (record as CWRParsedRecord<NWRData>)
+                      : (record as CWRParsedRecord<REVData>),
                   publishers: [],
                   otherPublishers: [],
                   writers: [],
@@ -181,73 +188,139 @@ class CWRParser {
                   performers: [],
                   recordings: [],
                   originators: [],
+                  workTitles: [],
+                  versions: [],
                 };
                 currentGroup.transactions.push(currentTransaction);
               }
               break;
-              
+
             case 'TRL':
               result.trailer = record as CWRParsedRecord<TRLData>;
               break;
-              
+
             default:
               // Add records to current transaction
               if (currentTransaction) {
                 switch (record.recordType) {
                   case 'SPU':
-                    currentTransaction.publishers.push(record as CWRParsedRecord<SPUData>);
+                    currentTransaction.publishers.push(
+                      record as CWRParsedRecord<SPUData>
+                    );
                     break;
                   case 'OPU':
-                    currentTransaction.otherPublishers.push(record as CWRParsedRecord<OPUData>);
+                    currentTransaction.otherPublishers.push(
+                      record as CWRParsedRecord<OPUData>
+                    );
                     break;
                   case 'SPT':
-                    // SPT records are publisher territory records, add to publishers
+                    // SPT records are publisher (SPU) territory records, add to publishers
                     if (currentTransaction.publishers.length > 0) {
-                      const lastPublisher = currentTransaction.publishers[currentTransaction.publishers.length - 1];
+                      const lastPublisher =
+                        currentTransaction.publishers[
+                          currentTransaction.publishers.length - 1
+                        ];
                       if (!lastPublisher.territories) {
-                        lastPublisher.territories  = [];
+                        lastPublisher.territories = [];
                       }
-                      lastPublisher.territories.push(record as CWRParsedRecord<SPTData>);
+                      lastPublisher.territories.push(
+                        record as CWRParsedRecord<SPTData>
+                      );
+                    }
+                    break;
+                  case 'OPT':
+                    // OPT records are other publisher (OPU) territory records, add to otherPublishers
+                    if (currentTransaction.otherPublishers.length > 0) {
+                      const lastPublisher =
+                        currentTransaction.otherPublishers[
+                          currentTransaction.otherPublishers.length - 1
+                        ];
+                      if (!lastPublisher.territories) {
+                        lastPublisher.territories = [];
+                      }
+                      lastPublisher.territories.push(
+                        record as CWRParsedRecord<OPTData>
+                      );
                     }
                     break;
                   case 'PWR':
                     // SPU reocrds indicate which writer the publisher belongs to
                     if (currentTransaction.writers.length > 0) {
-                      const lastWriter = currentTransaction.writers[currentTransaction.writers.length - 1];
+                      const lastWriter =
+                        currentTransaction.writers[
+                          currentTransaction.writers.length - 1
+                        ];
                       if (!lastWriter.publishers) {
                         lastWriter.publishers = [];
                       }
-                      lastWriter.publishers.push(record as CWRParsedRecord<PWRData>);
+                      lastWriter.publishers.push(
+                        record as CWRParsedRecord<PWRData>
+                      );
                     }
                     break;
                   case 'SWT':
                     // SWT reocrds holds territory information for writers
                     if (currentTransaction.writers.length > 0) {
-                      const lastWriter = currentTransaction.writers[currentTransaction.writers.length - 1];
+                      const lastWriter =
+                        currentTransaction.writers[
+                          currentTransaction.writers.length - 1
+                        ];
                       if (!lastWriter.territories) {
                         lastWriter.territories = [];
                       }
-                      lastWriter.territories.push(record as CWRParsedRecord<SWTData>);
+                      lastWriter.territories.push(
+                        record as CWRParsedRecord<SWTData>
+                      );
                     }
                     break;
                   case 'SWR':
-                    currentTransaction.writers.push(record as CWRParsedRecord<SWRData>);
+                    currentTransaction.writers.push(
+                      record as CWRParsedRecord<SWRData>
+                    );
                     break;
                   case 'OWR':
-                    currentTransaction.otherWriters.push(record as CWRParsedRecord<OWRData>);
+                    currentTransaction.otherWriters.push(
+                      record as CWRParsedRecord<OWRData>
+                    );
                     break;
                   case 'ALT':
-                    currentTransaction.alternativeTitles.push(record as CWRParsedRecord<ALTData>);
+                    currentTransaction.alternativeTitles.push(
+                      record as CWRParsedRecord<ALTData>
+                    );
                     break;
                   case 'PER':
-                    currentTransaction.performers.push(record as CWRParsedRecord<PERData>);
+                    currentTransaction.performers.push(
+                      record as CWRParsedRecord<PERData>
+                    );
                     break;
                   case 'REC':
-                    currentTransaction.recordings.push(record as CWRParsedRecord<RECData>);
+                    currentTransaction.recordings.push(
+                      record as CWRParsedRecord<RECData>
+                    );
                     break;
                   case 'ORN':
-                    currentTransaction.originators.push(record as CWRParsedRecord<ORNData>);
+                    currentTransaction.originators.push(
+                      record as CWRParsedRecord<ORNData>
+                    );
                     break;
+                  case 'VER':
+                    currentTransaction.versions.push(
+                      record as CWRParsedRecord<VERData>
+                    );
+                    break;
+                  case 'EWT':
+                    currentTransaction.workTitles.push(
+                      record as CWRParsedRecord<EWTData>
+                    );
+                    break;
+                  default:
+                    const errorMsg = `Line ${lineNumber}: Invalid Transaction or Record Type ${record.recordType}`;
+                    this.statistics.errors.push(errorMsg);
+                    if (this.options.strictMode) {
+                      throw new CWRError(errorMsg, 'ER', {
+                        type: record.recordType,
+                      });
+                    }
                 }
               }
               break;
@@ -255,7 +328,7 @@ class CWRParser {
         } catch (error: any) {
           const errorMsg = `Line ${lineNumber}: ${error.message}`;
           this.statistics.errors.push(errorMsg);
-          
+
           if (this.options.strictMode) {
             throw new CWRError(errorMsg, 'PARSE_ERROR');
           }
@@ -264,7 +337,6 @@ class CWRParser {
 
       result.statistics = this.getStatistics();
       return result;
-      
     } catch (error: any) {
       throw new CWRError(`Parse failed: ${error.message}`, 'PARSE_FAILED');
     }
@@ -280,7 +352,7 @@ class CWRParser {
 
     const recordType = line.substring(0, 3) as RecordTypeKey;
     const RecordClass = this.recordTypes.get(recordType);
-    
+
     if (!RecordClass) {
       const warning = `Unknown record type: ${recordType} at line ${lineNumber}`;
       this.statistics.warnings.push(warning);
@@ -297,7 +369,10 @@ class CWRParser {
         ...(this.options.includeRawData && { rawData: line }),
       };
     } catch (error: any) {
-      throw new CWRError(`Failed to parse ${recordType} record: ${error.message}`, 'RECORD_PARSE_ERROR');
+      throw new CWRError(
+        `Failed to parse ${recordType} record: ${error.message}`,
+        'RECORD_PARSE_ERROR'
+      );
     }
   }
 
@@ -307,7 +382,8 @@ class CWRParser {
   updateStatistics(record: CWRParsedRecord<AllCWRData>) {
     this.statistics.totalRecords++;
     const type = record.recordType;
-    this.statistics.recordCounts[type] = (this.statistics.recordCounts[type] || 0) + 1;
+    this.statistics.recordCounts[type] =
+      (this.statistics.recordCounts[type] || 0) + 1;
   }
 
   /**
@@ -331,7 +407,7 @@ class CWRParser {
     return {
       ...this.statistics,
       hasErrors: this.statistics.errors.length > 0,
-      hasWarnings: this.statistics.warnings.length > 0
+      hasWarnings: this.statistics.warnings.length > 0,
     };
   }
 
@@ -342,7 +418,7 @@ class CWRParser {
     const validation: ValidationResult = {
       isValid: true,
       errors: [],
-      warnings: []
+      warnings: [],
     };
 
     // Check required components
@@ -366,7 +442,7 @@ class CWRParser {
         validation.errors.push(`Group ${index + 1} missing header (GRH)`);
         validation.isValid = false;
       }
-      
+
       if (!group.trailer) {
         validation.warnings.push(`Group ${index + 1} missing trailer (GRT)`);
       }

@@ -1,4 +1,8 @@
 import { CWRRecord } from './CWRRecord.js';
+import { recordFields } from '../fields/index.js';
+// import hdrFieldsJson from '../fields/HDR.json' with { type: 'json' };
+
+// const hdrFields = hdrFieldsJson;
 
 /**
  * Header Record (HDR) - Contains transmission information
@@ -10,21 +14,7 @@ class HDRRecord extends CWRRecord {
   }
 
   getFieldDefinitions() {
-    return [
-      { name: 'recordType', type: 'string', length: 3, required: true },
-      { name: 'senderType', type: 'string', length: 2, required: true },
-      { name: 'senderId', type: 'string', length: 9, required: true },
-      { name: 'senderName', type: 'string', length: 45, required: true },
-      { name: 'ediVersion', type: 'string', length: 5, required: true },
-      { name: 'creationDate', type: 'date', length: 8, required: true },
-      { name: 'creationTime', type: 'time', length: 6, required: true },
-      { name: 'transmissionDate', type: 'date', length: 8, required: true },
-      { name: 'characterSet', type: 'string', length: 15, required: false },
-      { name: 'cwrVersion', type: 'string', length: 5, required: false },
-      { name: 'cwrRevision', type: 'string', length: 2, required: false },
-      { name: 'softwarePackage', type: 'string', length: 30, required: false },
-      { name: 'softwarePackageVersion', type: 'string', length: 30, required: false }
-    ];
+    return recordFields['HDR'];
   }
 
   validate() {
