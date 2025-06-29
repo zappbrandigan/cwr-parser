@@ -100,6 +100,7 @@ export type AllCWRData =
   | OPUData
   | OPTData
   | OWRData
+  | OWTData
   | ALTData
   | PERData
   | AGRData
@@ -161,7 +162,7 @@ export interface CWRTransaction {
   publishers: CWRPublisher[];
   otherPublishers: CWROtherPublisher[];
   writers: CWRWriter[];
-  otherWriters: CWRParsedRecord<OWRData>[];
+  otherWriters: CWROtherWriter[];
   alternativeTitles: CWRParsedRecord<ALTData>[];
   performers: CWRParsedRecord<PERData>[];
   recordings: CWRParsedRecord<RECData>[];
@@ -342,6 +343,10 @@ export interface SWTData extends TerritoryData {
   recordType: 'SWT';
 }
 
+export interface OWTData extends TerritoryData {
+  recordType: 'OWT';
+}
+
 interface WorkWriterData {
   transactionSequenceNumber: number;
   recordSequenceNumber: number;
@@ -433,16 +438,6 @@ export interface RECData {
   submitterRecordingId: string | null;
 }
 
-export interface PERData {
-  recordType: 'PER';
-  transactionSequenceNumber: number;
-  recordSequenceNumber: number;
-  performingArtistLastName: string | null;
-  performingArtistFirstName: string | null;
-  performingArtistIpiNameNumber: string | null;
-  performingArtistIpiBaseNumber: string | null;
-}
-
 export interface ALTData {
   recordType: 'ALT';
   transactionSequenceNumber: number;
@@ -526,6 +521,11 @@ export interface CWROtherPublisher extends CWRParsedRecord<OPUData> {
 export interface CWRWriter extends CWRParsedRecord<SWRData> {
   territories?: CWRParsedRecord<SWTData>[];
   publishers?: CWRParsedRecord<PWRData>[];
+}
+
+export interface CWROtherWriter extends CWRParsedRecord<OWRData> {
+  territories?: CWRParsedRecord<OWTData>[];
+  publishers?: CWRParsedRecord<OWRData>[];
 }
 
 export interface CWRRecordOptions {

@@ -53,6 +53,7 @@ import {
   VERData,
   EWTData,
   OPTData,
+  OWTData,
 } from './types';
 
 /**
@@ -270,6 +271,21 @@ class CWRParser {
                       }
                       lastWriter.territories.push(
                         record as CWRParsedRecord<SWTData>
+                      );
+                    }
+                    break;
+                  case 'OWT':
+                    // OWT (optional) reocrds holds territory information for otherWriters
+                    if (currentTransaction.otherWriters.length > 0) {
+                      const lastWriter =
+                        currentTransaction.otherWriters[
+                          currentTransaction.otherWriters.length - 1
+                        ];
+                      if (!lastWriter.territories) {
+                        lastWriter.territories = [];
+                      }
+                      lastWriter.territories.push(
+                        record as CWRParsedRecord<OWTData>
                       );
                     }
                     break;
