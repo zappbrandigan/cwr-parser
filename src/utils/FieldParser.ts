@@ -1,4 +1,5 @@
 import { territoryCodes } from '../tables/territoryCodes.js';
+import { societyCodes } from '../tables/societyCodes.js';
 import { CWRRecordOptions, FieldDefinition } from '../types';
 
 /**
@@ -176,7 +177,16 @@ class FieldParser {
     if (this.options.convertCodes) {
       switch (fieldName) {
         case 'tisCode':
-          return territoryCodes[Number(value) as keyof typeof territoryCodes];
+          return (
+            territoryCodes[Number(value) as keyof typeof territoryCodes] ??
+            value
+          );
+        case 'prAffiliationSocietyNumber':
+        case 'mrAffiliationSocietyNumber':
+        case 'srAffiliationSocietyNumber':
+          return (
+            societyCodes[Number(value) as keyof typeof societyCodes] ?? value
+          );
         default:
           return value;
       }
