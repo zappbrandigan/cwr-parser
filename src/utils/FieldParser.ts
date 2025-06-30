@@ -1,6 +1,7 @@
 import { territoryCodes } from '../tables/territoryCodes.js';
 import { societyCodes } from '../tables/societyCodes.js';
 import { CWRRecordOptions, FieldDefinition } from '../types';
+import { intendedPurpose } from '../tables/intendedPurpose.js';
 
 /**
  * Utility class for parsing CWR field values
@@ -186,6 +187,10 @@ class FieldParser {
         case 'srAffiliationSocietyNumber':
           return (
             societyCodes[Number(value) as keyof typeof societyCodes] ?? value
+          );
+        case 'intendedPurpose':
+          return (
+            intendedPurpose[value as keyof typeof intendedPurpose] ?? value
           );
         default:
           return value;
