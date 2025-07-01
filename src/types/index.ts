@@ -82,7 +82,10 @@ export type RecordTypeKey =
   | 'VER'
   | 'PER'
   | 'REC'
-  | 'ORN';
+  | 'ORN'
+  | 'INS'
+  | 'IND'
+  | 'COM';
 
 export type AllCWRData =
   | HDRData
@@ -115,7 +118,10 @@ export type AllCWRData =
   | VERData
   | PERData
   | RECData
-  | ORNData;
+  | ORNData
+  | INSData
+  | INDData
+  | COMData;
 
 export type RecordConstructor = new (
   options: CWRRecordOptions
@@ -571,6 +577,41 @@ export interface ORNData {
   checkDigitTwo: string | null;
   eidr: string | null;
   eidrCheckDigit: string | null;
+}
+
+export interface INSData {
+  recordType: 'INS';
+  transactionSequenceNumber: number;
+  recordSequenceNumber: number;
+  numberOfVoices: number | null;
+  standardInstrumentationType: string | null;
+  instrumentationDescription: string | null;
+}
+
+export interface INDData {
+  recordType: 'IND';
+  transactionSequenceNumber: number;
+  recordSequenceNumber: number;
+  instrumentCode: string;
+  numberOfPlayers: number | null;
+}
+
+export interface COMData {
+  recordType: 'COM';
+  ransactionSequenceNumber: number;
+  recordSequenceNumber: number;
+  title: string;
+  iswcOfComponent: string | null;
+  submitterWorkNumber: string | null;
+  duration: number | null;
+  writerOneLastName: string;
+  writerOneFirstName: string | null;
+  writerOneIpiNameNumber: string | null;
+  writerTwoLastName: string | null;
+  writerTwoFirstName: string | null;
+  writerTwoIpiNameNumber: string | null;
+  writerOneIpiBaseNumber: string | null;
+  writerTwoIpiBaseNumber: string | null;
 }
 
 // Wrapper types that include nested structures
