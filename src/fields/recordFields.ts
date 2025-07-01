@@ -1745,5 +1745,138 @@ export const recordFields: Record<RecordTypeKey, FieldDefinition[]> = {
       description: 'Check Character',
     },
   ],
-  // TODO INS, IND, COM, MSG, NET, NCT, NVT, NOW, ARI, XRF
+  INS: [
+    ...recordFieldPrefix,
+    {
+      name: 'numberOfVoices',
+      type: 'numeric',
+      length: 3,
+      required: false,
+      title: 'Number of Voices',
+      description:
+        'Indicates the number of independent parts included in this work',
+    },
+    {
+      name: 'standardInstrumentationType',
+      type: 'string',
+      length: 3,
+      required: false,
+      title: 'Standard Instrumentation Type',
+      description:
+        'Describes instrumentation if standard instrumentation is used on this work',
+    },
+    {
+      name: 'instrumentationDescription',
+      type: 'string',
+      length: 50,
+      required: false,
+      title: 'Instrumentation Description',
+      description:
+        'Describes instrumentation if non-standard instrumentation is used on this work',
+    },
+  ],
+  IND: [
+    ...recordFieldPrefix,
+    {
+      name: 'instrumentCode',
+      type: 'table',
+      length: 3,
+      required: true,
+      title: 'Instrument Code',
+      description:
+        'Indicates the use of a specific instrument in this version of instrumentation',
+    },
+    {
+      name: 'numberOfPlayers',
+      type: 'numeric',
+      length: 3,
+      required: false,
+      title: 'Number of Players',
+      description: 'Indicates the number of players for the above instrument',
+    },
+  ],
+  COM: [
+    ...recordFieldPrefix,
+    {
+      name: 'title',
+      type: 'string',
+      length: 60,
+      required: true,
+      title: 'Title',
+      description:
+        'The title of the original work from which a portion was taken and included in the composite work',
+    },
+    {
+      name: 'iswcOfComponent',
+      type: 'string',
+      length: 11,
+      required: false,
+      title: 'ISWC of Component',
+      description:
+        'The International Standard Work Code assigned to the original work from which a portion was taken and included in this composite work',
+    },
+    {
+      name: 'submiterWorkNumber',
+      type: 'string',
+      length: 14,
+      required: false,
+      title: 'Submiter Work Number',
+      description:
+        'The number that the submitting party uses to refer to this composite component',
+    },
+    {
+      name: 'duration',
+      type: 'numeric',
+      length: 6,
+      required: false,
+      title: 'Duration',
+      description: 'The duration of this composite component',
+    },
+    {
+      name: 'writerOneLastName',
+      type: 'string',
+      length: 45,
+      required: true,
+      title: 'Writer One Last Name',
+      description: 'Last name of the first writer of this component',
+    },
+    {
+      name: 'writerOneFirstName',
+      type: 'string',
+      length: 30,
+      required: false,
+      title: 'Writer One First Name',
+      description: 'First name of the first writer of this component',
+    },
+    {
+      ...interestedPartyNumbers['IPIN'],
+      name: 'writerOneIpiNameNumber',
+    },
+    {
+      name: 'writerTwoLastName',
+      type: 'string',
+      length: 45,
+      required: false,
+      title: 'Writer Two Last Name',
+      description: 'Last name of the second writer of this component',
+    },
+    {
+      name: 'writerTwoFirstName',
+      type: 'string',
+      length: 30,
+      required: false,
+      title: 'Writer Two First Name',
+      description: 'First name of the second writer of this component',
+    },
+    {
+      ...interestedPartyNumbers['IPIN'],
+      name: 'writerTwoIpiNameNumber',
+    },
+    {
+      ...interestedPartyNumbers['IPIB'],
+      name: 'writerOneIpiBaseNumber',
+    },
+    { ...interestedPartyNumbers['IPIB'], name: 'writerTwoIpiBaseNumber' },
+  ],
+  // TODO MSG, NET, NCT, NVT, NOW, ARI, XRF
 };
