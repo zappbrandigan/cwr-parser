@@ -1,34 +1,35 @@
-import { HDRRecord } from './records/HDRRecord.js';
-import { GRHRecord } from './records/GRHRecord.js';
-import { GRTRecord } from './records/GRTRecord.js';
-import { EWTRecord } from './records/EWTRecord.js';
-import { NWRRecord } from './records/NWRRecord.js';
-import { REVRecord } from './records/REVRecord.js';
-import { EXCRecord } from './records/EXCRecord.js';
-import { ISWRecord } from './records/ISWRecord.js';
-import { SPURecord } from './records/SPURecord.js';
-import { SPTRecord } from './records/SPTRecord.js';
-import { SWTRecord } from './records/SWTRecord.js';
-import { OPURecord } from './records/OPURecord.js';
-import { OPTRecord } from './records/OPTRecord.js';
-import { PWRRecord } from './records/PWRRecord.js';
-import { OWRRecord } from './records/OWRRecord.js';
-import { SWRRecord } from './records/SWRRecord.js';
-import { ALTRecord } from './records/ALTRecord.js';
-import { PERRecord } from './records/PERRecord.js';
-import { RECRecord } from './records/RECRecord.js';
-import { ORNRecord } from './records/ORNRecord.js';
-import { VERRecord } from './records/VERRecord.js';
-import { TRLRecord } from './records/TRLRecord.js';
-import { AGRRecord } from './records/AGRRecord.js';
+// import { HDRRecord } from './records/HDRRecord.js';
+// import { GRHRecord } from './records/GRHRecord.js';
+// import { GRTRecord } from './records/GRTRecord.js';
+// import { EWTRecord } from './records/EWTRecord.js';
+// import { NWRRecord } from './records/NWRRecord.js';
+// import { REVRecord } from './records/REVRecord.js';
+// import { EXCRecord } from './records/EXCRecord.js';
+// import { ISWRecord } from './records/ISWRecord.js';
+// import { SPURecord } from './records/SPURecord.js';
+// import { SPTRecord } from './records/SPTRecord.js';
+// import { SWTRecord } from './records/SWTRecord.js';
+// import { OPURecord } from './records/OPURecord.js';
+// import { OPTRecord } from './records/OPTRecord.js';
+// import { PWRRecord } from './records/PWRRecord.js';
+// import { OWRRecord } from './records/OWRRecord.js';
+// import { SWRRecord } from './records/SWRRecord.js';
+// import { ALTRecord } from './records/ALTRecord.js';
+// import { PERRecord } from './records/PERRecord.js';
+// import { RECRecord } from './records/RECRecord.js';
+// import { ORNRecord } from './records/ORNRecord.js';
+// import { VERRecord } from './records/VERRecord.js';
+// import { TRLRecord } from './records/TRLRecord.js';
+// import { AGRRecord } from './records/AGRRecord.js';
 import { CWRError } from './utils/CWRError.js';
-import { 
-  ParseStatistics, 
-  RecordTypesMap, 
-  RecordTypeKey, 
+import {
+  ParseStatistics,
+  RecordTypesMap,
+  RecordTypeKey,
   CWRConverterRecord,
   CWRParsedRecord,
 } from './types';
+import { recordTypes } from './records/index.js';
 
 /**
  * A CWR converter class for parsing CWR v21 and v22 files for enhanced raw viewing
@@ -36,34 +37,10 @@ import {
 class CWRConverter {
   recordTypes: RecordTypesMap;
   statistics: ParseStatistics;
-  
+
   constructor() {
-    this.recordTypes = new Map([
-      ['HDR', HDRRecord],
-      ['GRH', GRHRecord],
-      ['GRT', GRTRecord],
-      ['TRL', TRLRecord],
-      ['NWR', NWRRecord],
-      ['REV', REVRecord],
-      ['EXC', EXCRecord],
-      ['ISW', ISWRecord],
-      ['EWT', EWTRecord],
-      ['SPU', SPURecord],
-      ['SPT', SPTRecord],
-      ['OPU', OPURecord],
-      ['OPT', OPTRecord],
-      ['SWT', SWTRecord],
-      ['PWR', PWRRecord],
-      ['SWR', SWRRecord],
-      ['OWR', OWRRecord],
-      ['ALT', ALTRecord],
-      ['PER', PERRecord],
-      ['REC', RECRecord],
-      ['ORN', ORNRecord],
-      ['VER', VERRecord],
-      ['AGR', AGRRecord],
-    ]);
-    
+    this.recordTypes = recordTypes;
+
     this.statistics = {
       totalRecords: 0,
       recordCounts: {},
@@ -74,14 +51,13 @@ class CWRConverter {
     };
   }
 
-
   /**
    * Map CWR data from string
    */
   mapString(data: string, fileName = 'unknown') {
     this.resetStatistics();
 
-    const lines = data.split(/\r?\n/).filter(line => line.trim());
+    const lines = data.split(/\r?\n/).filter((line) => line.trim());
     const result: CWRConverterRecord = {
       fileName,
       version: null,
@@ -89,7 +65,7 @@ class CWRConverter {
       statistics: null,
       meatadata: {
         parsedAt: new Date().toISOString(),
-      }
+      },
     };
 
     try {
@@ -114,7 +90,6 @@ class CWRConverter {
       //@ts-ignore
       result.statistics = this.getStatistics();
       return result;
-
     } catch (error: any) {
       throw new CWRError(`Parse failed: ${error.message}`, 'PARSE_FAILED');
     }
@@ -123,7 +98,10 @@ class CWRConverter {
   /**
    * Parse a single line of CWR data
    */
-  parseLine(line: string, lineNumber: number): CWRParsedRecord<Map<string, string>> | null {
+  parseLine(
+    line: string,
+    lineNumber: number
+  ): CWRParsedRecord<Map<string, string>> | null {
     if (line.length < 3) {
       return null; // Skip empty or too short lines
     }
@@ -142,10 +120,13 @@ class CWRConverter {
       return {
         recordType: recordType as RecordTypeKey,
         lineNumber,
-        data: mappedRecord
+        data: mappedRecord,
       };
     } catch (error: any) {
-      throw new CWRError(`Failed to parse ${recordType} record: ${error.message}`, 'RECORD_PARSE_ERROR');
+      throw new CWRError(
+        `Failed to parse ${recordType} record: ${error.message}`,
+        'RECORD_PARSE_ERROR'
+      );
     }
   }
 
@@ -155,7 +136,8 @@ class CWRConverter {
   updateStatistics(record: CWRParsedRecord<Map<string, string>>) {
     this.statistics.totalRecords++;
     const type = record.recordType;
-    this.statistics.recordCounts[type] = (this.statistics.recordCounts[type] || 0) + 1;
+    this.statistics.recordCounts[type] =
+      (this.statistics.recordCounts[type] || 0) + 1;
   }
 
   /**
@@ -179,7 +161,7 @@ class CWRConverter {
     return {
       ...this.statistics,
       hasErrors: this.statistics.errors.length > 0,
-      hasWarnings: this.statistics.warnings.length > 0
+      hasWarnings: this.statistics.warnings.length > 0,
     };
   }
 }

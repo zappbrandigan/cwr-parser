@@ -1390,7 +1390,7 @@ export const recordFields: Record<RecordTypeKey, FieldDefinition[]> = {
   NAT: [
     ...recordFieldPrefix,
     {
-      name: 'workTitle',
+      name: 'alternativeTitle',
       type: 'string',
       length: 60,
       required: true,
@@ -1816,7 +1816,7 @@ export const recordFields: Record<RecordTypeKey, FieldDefinition[]> = {
         'The International Standard Work Code assigned to the original work from which a portion was taken and included in this composite work',
     },
     {
-      name: 'submiterWorkNumber',
+      name: 'submitterWorkNumber',
       type: 'string',
       length: 14,
       required: false,

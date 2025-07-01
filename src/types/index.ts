@@ -23,33 +23,51 @@ import { TRLRecord } from '../records/TRLRecord';
 import { AGRRecord } from '../records/AGRRecord';
 import { TERRecord } from '../records/TERRecord';
 import { IPARecord } from '../records/IPARecord';
+import { ACKRecord } from '../records/ACKRecord';
+import { NPARecord } from '../records/NPARecord';
+import { NPNRecord } from '../records/NPNRecord';
+import { NWNRecord } from '../records/NWNRecord';
+import { OWTRecord } from '../records/OWTRecord';
+import { NATRecord } from '../records/NATRecord';
+import { INSRecord } from '../records/INSRecord';
+import { INDRecord } from '../records/INDRecord';
+import { COMRecord } from '../records/COMRecord';
 
 export type RecordInstance =
   | InstanceType<typeof HDRRecord>
   | InstanceType<typeof GRHRecord>
   | InstanceType<typeof GRTRecord>
-  | InstanceType<typeof EWTRecord>
+  | InstanceType<typeof TRLRecord>
+  | InstanceType<typeof AGRRecord>
   | InstanceType<typeof NWRRecord>
   | InstanceType<typeof REVRecord>
-  | InstanceType<typeof EXCRecord>
   | InstanceType<typeof ISWRecord>
+  | InstanceType<typeof EXCRecord>
+  | InstanceType<typeof ACKRecord>
+  | InstanceType<typeof TERRecord>
+  | InstanceType<typeof IPARecord>
+  | InstanceType<typeof NPARecord>
   | InstanceType<typeof SPURecord>
-  | InstanceType<typeof SPTRecord>
-  | InstanceType<typeof SWTRecord>
   | InstanceType<typeof OPURecord>
+  | InstanceType<typeof NPNRecord>
+  | InstanceType<typeof SPTRecord>
   | InstanceType<typeof OPTRecord>
-  | InstanceType<typeof PWRRecord>
-  | InstanceType<typeof OWRRecord>
   | InstanceType<typeof SWRRecord>
+  | InstanceType<typeof OWRRecord>
+  | InstanceType<typeof NWNRecord>
+  | InstanceType<typeof SWTRecord>
+  | InstanceType<typeof OWTRecord>
+  | InstanceType<typeof PWRRecord>
   | InstanceType<typeof ALTRecord>
+  | InstanceType<typeof NATRecord>
+  | InstanceType<typeof EWTRecord>
+  | InstanceType<typeof VERRecord>
   | InstanceType<typeof PERRecord>
   | InstanceType<typeof RECRecord>
   | InstanceType<typeof ORNRecord>
-  | InstanceType<typeof VERRecord>
-  | InstanceType<typeof AGRRecord>
-  | InstanceType<typeof TERRecord>
-  | InstanceType<typeof IPARecord>
-  | InstanceType<typeof TRLRecord>;
+  | InstanceType<typeof INSRecord>
+  | InstanceType<typeof INDRecord>
+  | InstanceType<typeof COMRecord>;
 
 export type RecordTypeKey =
   | 'HDR'
@@ -176,7 +194,7 @@ export interface CWRTransaction {
   otherPublishers: CWROtherPublisher[];
   writers: CWRWriter[];
   otherWriters: CWROtherWriter[];
-  alternativeTitles: CWRParsedRecord<ALTData>[];
+  alternativeTitles: CWRParsedRecord<ALTData | NATData>[];
   performers: CWRParsedRecord<PERData>[];
   recordings: CWRParsedRecord<RECData>[];
   originators: CWRParsedRecord<ORNData>[];
@@ -490,7 +508,7 @@ export interface NATData {
   recordType: 'NAT';
   transactionSequenceNumber: number;
   recordSequenceNumber: number;
-  workTitle: string;
+  alternativeTitle: string;
   titleType: string | null;
   languageCode: string | null;
 }
