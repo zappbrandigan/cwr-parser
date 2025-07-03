@@ -33,6 +33,7 @@ import { INSRecord } from './INSRecord.js';
 import { INDRecord } from './INDRecord.js';
 import { COMRecord } from './COMRecord.js';
 import { NPARecord } from './NPARecord.js';
+import { MSGRecord } from './MSGRecord.js';
 
 export const recordTypes: Map<RecordTypeKey, RecordConstructor> = new Map([
   ['HDR', HDRRecord],
@@ -69,4 +70,5 @@ export const recordTypes: Map<RecordTypeKey, RecordConstructor> = new Map([
   ['INS', INSRecord],
   ['IND', INDRecord],
   ['COM', COMRecord],
+  ['MSG', MSGRecord],
 ]);

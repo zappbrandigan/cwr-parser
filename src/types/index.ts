@@ -32,6 +32,7 @@ import { NATRecord } from '../records/NATRecord';
 import { INSRecord } from '../records/INSRecord';
 import { INDRecord } from '../records/INDRecord';
 import { COMRecord } from '../records/COMRecord';
+import { MSGRecord } from '../records/MSGRecord';
 
 export type RecordInstance =
   | InstanceType<typeof HDRRecord>
@@ -67,7 +68,8 @@ export type RecordInstance =
   | InstanceType<typeof ORNRecord>
   | InstanceType<typeof INSRecord>
   | InstanceType<typeof INDRecord>
-  | InstanceType<typeof COMRecord>;
+  | InstanceType<typeof COMRecord>
+  | InstanceType<typeof MSGRecord>;
 
 export type RecordTypeKey =
   | 'HDR'
@@ -103,7 +105,8 @@ export type RecordTypeKey =
   | 'ORN'
   | 'INS'
   | 'IND'
-  | 'COM';
+  | 'COM'
+  | 'MSG';
 
 export type AllCWRData =
   | HDRData
@@ -139,7 +142,8 @@ export type AllCWRData =
   | ORNData
   | INSData
   | INDData
-  | COMData;
+  | COMData
+  | MSGData;
 
 export type RecordConstructor = new (
   options: CWRRecordOptions
@@ -630,6 +634,18 @@ export interface COMData {
   writerTwoIpiNameNumber: string | null;
   writerOneIpiBaseNumber: string | null;
   writerTwoIpiBaseNumber: string | null;
+}
+
+export interface MSGData {
+  recordType: 'MSG';
+  ransactionSequenceNumber: number;
+  recordSequenceNumber: number;
+  messageType: string;
+  originalRecordSequenceNumber: number;
+  originalRecordType: string;
+  messageLevel: string;
+  validationNumber: string;
+  messageText: string;
 }
 
 // Wrapper types that include nested structures
