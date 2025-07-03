@@ -151,6 +151,11 @@ class CWRParser {
               }
               break;
 
+            case 'ACK':
+            case 'MSG':
+              // TODO
+              continue;
+
             case 'NWR':
               // These are transaction records that start a new work
               if (currentGroup) {
@@ -323,10 +328,6 @@ class CWRParser {
                       record as CWRParsedRecord<EWTData>
                     );
                     break;
-                  case 'ACK':
-                  case 'MSG':
-                    // TODO
-                    continue;
                   default:
                     const errorMsg = `Line ${lineNumber}: Invalid Transaction or Record Type ${record.recordType}`;
                     this.statistics.errors.push(errorMsg);
