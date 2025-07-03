@@ -1878,5 +1878,59 @@ export const recordFields: Record<RecordTypeKey, FieldDefinition[]> = {
     },
     { ...interestedPartyNumbers['IPIB'], name: 'writerTwoIpiBaseNumber' },
   ],
-  // TODO MSG, NET, NCT, NVT, NOW, ARI, XRF
+  MSG: [
+    ...recordFieldPrefix,
+    {
+      name: 'messageType',
+      type: 'table',
+      length: 1,
+      required: true,
+      title: 'Message Type',
+      description:
+        'Indicates whether this information is a warning, error, or for information only',
+    },
+    {
+      name: 'originalRecordSequenceNumber',
+      type: 'numeric',
+      length: 8,
+      required: true,
+      title: 'Original Record Sequence Number',
+      description:
+        'The sequence number within the transaction associated with this acknowledgment that caused the generation of this message.',
+    },
+    {
+      name: 'originalRecordType',
+      type: 'string',
+      length: 3,
+      required: true,
+      title: 'Original Record Type',
+      description:
+        'The record type within the original transaction that caused generation of this message',
+    },
+    {
+      name: 'messageLevel',
+      type: 'table',
+      length: 1,
+      required: true,
+      title: 'Message Level',
+      description: 'The text associated with this message',
+    },
+    {
+      name: 'validationNumber',
+      type: 'string',
+      length: 3,
+      required: true,
+      title: 'Validation Number',
+      description: 'The specific edit condition that generated this message',
+    },
+    {
+      name: 'messageText',
+      type: 'string',
+      length: 150,
+      required: true,
+      title: 'Message Text',
+      description: 'The text associated with this message',
+    },
+  ],
+  // TODO NET, NCT, NVT, NOW, ARI, XRF
 };
