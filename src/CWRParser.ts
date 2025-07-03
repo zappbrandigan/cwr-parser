@@ -152,14 +152,28 @@ class CWRParser {
               break;
 
             case 'NWR':
+              // These are transaction records that start a new work
+              if (currentGroup) {
+                currentTransaction = {
+                  header: record as CWRParsedRecord<NWRData>,
+                  publishers: [],
+                  otherPublishers: [],
+                  writers: [],
+                  otherWriters: [],
+                  alternativeTitles: [],
+                  performers: [],
+                  recordings: [],
+                  originators: [],
+                  workTitles: [],
+                  versions: [],
+                };
+                currentGroup.transactions.push(currentTransaction);
+              }
             case 'REV':
               // These are transaction records that start a new work
               if (currentGroup) {
                 currentTransaction = {
-                  header:
-                    record.recordType === 'NWR'
-                      ? (record as CWRParsedRecord<NWRData>)
-                      : (record as CWRParsedRecord<REVData>),
+                  header: record as CWRParsedRecord<REVData>,
                   publishers: [],
                   otherPublishers: [],
                   writers: [],
@@ -309,6 +323,10 @@ class CWRParser {
                       record as CWRParsedRecord<EWTData>
                     );
                     break;
+                  case 'ACK':
+                  case 'MSG':
+                    // TODO
+                    continue;
                   default:
                     const errorMsg = `Line ${lineNumber}: Invalid Transaction or Record Type ${record.recordType}`;
                     this.statistics.errors.push(errorMsg);
