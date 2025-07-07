@@ -106,7 +106,13 @@ export type RecordTypeKey =
   | 'INS'
   | 'IND'
   | 'COM'
-  | 'MSG';
+  | 'MSG'
+  | 'NET'
+  | 'NCT'
+  | 'NVT'
+  | 'NOW'
+  | 'ARI'
+  | 'XRF';
 
 export type AllCWRData =
   | HDRData
@@ -143,7 +149,13 @@ export type AllCWRData =
   | INSData
   | INDData
   | COMData
-  | MSGData;
+  | MSGData
+  | NETData
+  | NCTData
+  | NVTData
+  | NOWData
+  | ARIData
+  | XRFData;
 
 export type RecordConstructor = new (
   options: CWRRecordOptions
@@ -638,7 +650,7 @@ export interface COMData {
 
 export interface MSGData {
   recordType: 'MSG';
-  ransactionSequenceNumber: number;
+  transactionSequenceNumber: number;
   recordSequenceNumber: number;
   messageType: string;
   originalRecordSequenceNumber: number;
@@ -646,6 +658,55 @@ export interface MSGData {
   messageLevel: string;
   validationNumber: string;
   messageText: string;
+}
+
+interface NonRomanData {
+  transactionSequenceNumber: number;
+  recordSequenceNumber: number;
+  title: string;
+  languageCode: string | null;
+}
+
+export interface NETData extends NonRomanData {
+  recordType: 'NET';
+}
+
+export interface NCTData extends NonRomanData {
+  recordType: 'NCT';
+}
+
+export interface NVTData extends NonRomanData {
+  recordType: 'NVT';
+}
+
+export interface NOWData {
+  recordType: 'NOW';
+  transactionSequenceNumber: number;
+  recordSequenceNumber: number;
+  writerName: string;
+  writerFirstName: string;
+  languageCode: string | null;
+  writerPosition: string | null;
+}
+
+export interface ARIData {
+  recordType: 'ARI';
+  transactionSequenceNumber: number;
+  recordSequenceNumber: number;
+  societyNumber: string;
+  workNumber: string | null;
+  typeOfRight: string;
+  subjectCode: string | null;
+  note: string | null;
+}
+export interface XRFData {
+  recordType: 'XRF';
+  transactionSequenceNumber: number;
+  recordSequenceNumber: number;
+  organisationCode: string;
+  identifier: string;
+  identifierType: string;
+  validity: string;
 }
 
 // Wrapper types that include nested structures

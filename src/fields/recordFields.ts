@@ -753,6 +753,30 @@ const versionFields: FieldDefinition[] = [
   },
 ];
 
+/**
+ * NET/NCT/NVT share the same fields
+ */
+const nonRomanFields: FieldDefinition[] = [
+  ...recordFieldPrefix,
+  {
+    name: 'title',
+    type: 'string',
+    length: 640,
+    required: true,
+    title: 'Non-Roman Alphabet Entire Work Title',
+    description:
+      'This record identifies titles in other alphabets for this work',
+  },
+  {
+    name: 'languageCode',
+    type: 'table',
+    length: 2,
+    required: false,
+    title: 'Language Code',
+    description: 'The Language code of the title',
+  },
+];
+
 export const recordFields: Record<RecordTypeKey, FieldDefinition[]> = {
   HDR: [
     recordFieldPrefix[0],
@@ -1932,5 +1956,123 @@ export const recordFields: Record<RecordTypeKey, FieldDefinition[]> = {
       description: 'The text associated with this message',
     },
   ],
-  // TODO NET, NCT, NVT, NOW, ARI, XRF
+  NET: [...nonRomanFields],
+  NCT: [...nonRomanFields],
+  NVT: [...nonRomanFields],
+  NOW: [
+    ...recordFieldPrefix,
+    {
+      name: 'writerName',
+      type: 'string',
+      length: 160,
+      required: true,
+      title: 'Writer Name',
+      description: 'The last or single name of this writer',
+    },
+    {
+      name: 'writerFirstName',
+      type: 'string',
+      length: 160,
+      required: true,
+      title: 'Writer First Name',
+      description: 'The first name of this writer',
+    },
+    {
+      name: 'languageCode',
+      type: 'table',
+      length: 2,
+      required: false,
+      title: 'Language Code',
+      description: 'The language code of the name',
+    },
+    {
+      name: 'writerPosition',
+      type: 'string',
+      length: 1,
+      required: false,
+      title: 'Writer Position',
+      description:
+        'The position of the writter in the corresponding EWT, VER, or COM record',
+    },
+  ],
+  ARI: [
+    ...recordFieldPrefix,
+    {
+      name: 'societNumber',
+      type: 'table',
+      length: 3,
+      required: true,
+      title: 'Society Mumber',
+      description:
+        'Number assigned to the Society to which the Note is addressed',
+    },
+    {
+      name: 'workNumber',
+      type: 'string',
+      length: 14,
+      required: false,
+      title: 'Work Number',
+      description: 'The Society work # that relates to this registration',
+    },
+    {
+      name: 'typeOfRight',
+      type: 'table',
+      length: 3,
+      required: true,
+      title: 'Type of Right',
+      description:
+        'Indicates that this information relates to performing rights, mechanical rights, sync. rights or all rights',
+    },
+    {
+      name: 'subjectCode',
+      type: 'table',
+      length: 2,
+      required: false,
+      title: 'Subject Code',
+      description: 'ubject of the ARI',
+    },
+    {
+      name: 'note',
+      type: 'string',
+      length: 160,
+      required: false,
+      title: 'Note',
+      description:
+        'Free text field pertaining to the type of right and subject specified above',
+    },
+  ],
+  XRF: [
+    ...recordFieldPrefix,
+    {
+      name: 'organisationCode',
+      type: 'table',
+      length: 3,
+      required: true,
+      title: 'Organisation Code',
+      description: 'Number assigned to the Organisation',
+    },
+    {
+      name: 'identifier',
+      type: 'string',
+      length: 14,
+      required: true,
+      title: 'Identifier',
+      description: 'An identifier that relates to this work Transaction',
+    },
+    {
+      name: 'identifierType',
+      type: 'table',
+      length: 1,
+      required: true,
+      title: 'Identifier Type',
+      description: 'The type of identifier',
+    },
+    {
+      name: 'validity',
+      ...flag,
+      required: true,
+      title: 'Validity',
+      description: 'Indicates whether the Identifier is valid or not',
+    },
+  ],
 };

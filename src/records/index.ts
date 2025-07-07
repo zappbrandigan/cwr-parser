@@ -34,6 +34,12 @@ import { INDRecord } from './INDRecord.js';
 import { COMRecord } from './COMRecord.js';
 import { NPARecord } from './NPARecord.js';
 import { MSGRecord } from './MSGRecord.js';
+import { NETRecord } from './NETRecord.js';
+import { NCTRecord } from './NCTRecord.js';
+import { NVTRecord } from './NVTRecord.js';
+import { NOWRecord } from './NOWRecord.js';
+import { ARIRecord } from './ARIRecord.js';
+import { XRFRecord } from './XRFRecord.js';
 
 export const recordTypes: Map<RecordTypeKey, RecordConstructor> = new Map([
   ['HDR', HDRRecord],
@@ -71,4 +77,10 @@ export const recordTypes: Map<RecordTypeKey, RecordConstructor> = new Map([
   ['IND', INDRecord],
   ['COM', COMRecord],
   ['MSG', MSGRecord],
+  ['NET', NETRecord],
+  ['NCT', NCTRecord],
+  ['NVT', NVTRecord],
+  ['NOW', NOWRecord],
+  ['ARI', ARIRecord],
+  ['XRF', XRFRecord],
 ]);
