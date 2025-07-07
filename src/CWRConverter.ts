@@ -1,26 +1,3 @@
-// import { HDRRecord } from './records/HDRRecord.js';
-// import { GRHRecord } from './records/GRHRecord.js';
-// import { GRTRecord } from './records/GRTRecord.js';
-// import { EWTRecord } from './records/EWTRecord.js';
-// import { NWRRecord } from './records/NWRRecord.js';
-// import { REVRecord } from './records/REVRecord.js';
-// import { EXCRecord } from './records/EXCRecord.js';
-// import { ISWRecord } from './records/ISWRecord.js';
-// import { SPURecord } from './records/SPURecord.js';
-// import { SPTRecord } from './records/SPTRecord.js';
-// import { SWTRecord } from './records/SWTRecord.js';
-// import { OPURecord } from './records/OPURecord.js';
-// import { OPTRecord } from './records/OPTRecord.js';
-// import { PWRRecord } from './records/PWRRecord.js';
-// import { OWRRecord } from './records/OWRRecord.js';
-// import { SWRRecord } from './records/SWRRecord.js';
-// import { ALTRecord } from './records/ALTRecord.js';
-// import { PERRecord } from './records/PERRecord.js';
-// import { RECRecord } from './records/RECRecord.js';
-// import { ORNRecord } from './records/ORNRecord.js';
-// import { VERRecord } from './records/VERRecord.js';
-// import { TRLRecord } from './records/TRLRecord.js';
-// import { AGRRecord } from './records/AGRRecord.js';
 import { CWRError } from './utils/CWRError.js';
 import {
   ParseStatistics,

@@ -1454,7 +1454,44 @@ export const recordFields: Record<RecordTypeKey, FieldDefinition[]> = {
     interestedPartyNumbers['IPIN'],
     interestedPartyNumbers['IPIB'],
   ],
-  // TODO NPR
+  NPR: [
+    ...recordFieldPrefix,
+    {
+      name: 'performingAristName',
+      type: 'string',
+      length: 160,
+      required: false,
+      title: 'Performing Artist Name',
+      description: 'Name of a person or full name of a group',
+    },
+    {
+      name: 'performingAristFirstName',
+      type: 'string',
+      length: 160,
+      required: false,
+      title: 'Performing Artist First Name',
+      description: 'First name of a person that has performed the work',
+    },
+    interestedPartyNumbers['IPIN'],
+    interestedPartyNumbers['IPIB'],
+    languageCode,
+    {
+      name: 'performanceLanguage',
+      type: 'table',
+      length: 2,
+      required: false,
+      title: 'Performance Language',
+      description: 'The language used in the performance',
+    },
+    {
+      name: 'performanceDialect',
+      type: 'table',
+      length: 3,
+      required: false,
+      title: 'Performance Dialect',
+      description: 'The dialect used in the performance [ISO 639-2(T)]',
+    },
+  ],
   REC: [
     ...recordFieldPrefix,
     {

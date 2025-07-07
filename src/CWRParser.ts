@@ -1,36 +1,9 @@
-// import { HDRRecord } from './records/HDRRecord.js';
-// import { GRHRecord } from './records/GRHRecord.js';
-// import { GRTRecord } from './records/GRTRecord.js';
-// import { EWTRecord } from './records/EWTRecord.js';
-// import { NWRRecord } from './records/NWRRecord.js';
-// import { REVRecord } from './records/REVRecord.js';
-// import { EXCRecord } from './records/EXCRecord.js';
-// import { ISWRecord } from './records/ISWRecord.js';
-// import { SPURecord } from './records/SPURecord.js';
-// import { SPTRecord } from './records/SPTRecord.js';
-// import { SWTRecord } from './records/SWTRecord.js';
-// import { OPURecord } from './records/OPURecord.js';
-// import { OPTRecord } from './records/OPTRecord.js';
-// import { PWRRecord } from './records/PWRRecord.js';
-// import { OWRRecord } from './records/OWRRecord.js';
-// import { SWRRecord } from './records/SWRRecord.js';
-// import { ALTRecord } from './records/ALTRecord.js';
-// import { PERRecord } from './records/PERRecord.js';
-// import { RECRecord } from './records/RECRecord.js';
-// import { ORNRecord } from './records/ORNRecord.js';
-// import { VERRecord } from './records/VERRecord.js';
-// import { TRLRecord } from './records/TRLRecord.js';
-// import { AGRRecord } from './records/AGRRecord.js';
 import { CWRError } from './utils/CWRError.js';
 import {
   CWRRecordOptions,
-  ParsedCWRFile,
   ParseStatistics,
   RecordTypesMap,
-  CWRTransaction,
-  CWRGroup,
   RecordTypeKey,
-  CWRParsedRecord,
   AllCWRData,
   ValidationResult,
   HDRData,
@@ -41,20 +14,32 @@ import {
   SPTData,
   PWRData,
   SWTData,
-  ORNData,
   SWRData,
-  ALTData,
   TRLData,
   OWRData,
-  PERData,
   RECData,
   NWRData,
   REVData,
   VERData,
-  EWTData,
   OPTData,
   OWTData,
-  NATData,
+  NPNData,
+  ACKData,
+  MSGData,
+  EXCData,
+  ISWData,
+  ParsedCWRFile,
+  NWNData,
+  EWTData,
+  NETData,
+  NVTData,
+  ParsedGroup,
+  ParsedOWR,
+  ParsedSPU,
+  ParsedSWR,
+  ParsedTransaction,
+  ParsedTransmission,
+  ParsedWork,
 } from './types';
 import { recordTypes } from './records/index.js';
 
@@ -90,263 +75,143 @@ class CWRParser {
   /**
    * Parse CWR data from string
    */
-  parseString(data: string, fileName = 'unknown'): ParsedCWRFile {
+  parseString(data: string, fileName = 'unknown'): ParsedTransmission {
     this.resetStatistics();
 
     const lines = data.split(/\r?\n/).filter((line) => line.trim().length > 0);
-    const result: ParsedCWRFile = {
+
+    const result: ParsedTransmission = {
       fileName,
       version: null,
-      header: null,
+      hdr: { fields: null },
       groups: [],
-      trailer: null,
+      trl: { fields: null },
       statistics: null,
       metadata: {
         parsedAt: new Date().toISOString(),
-        parser: 'cwr-parser v1.0.2',
+        parser: 'cwr-parser',
       },
     };
 
-    let currentGroup: CWRGroup | null = null;
-    let currentTransaction: CWRTransaction | null = null;
+    // let transactionType = '';
+    let currentGroup: ParsedGroup | null = null;
+    let currentTransaction: ParsedTransaction | null = null;
+    let currentSequenceNumber: number | null = null;
 
     try {
-      for (let i = 0; i < lines.length; i++) {
+      for (let i = 0; i < lines.length; ) {
         const line = lines[i];
         const lineNumber = i + 1;
 
+        currentGroup = result.groups.at(-1) ?? null;
+
         try {
-          const record = this.parseLine(
-            line,
-            lineNumber
-          ) as CWRParsedRecord<AllCWRData>;
-          if (!record) continue;
+          const record = this.parseLine(line, lineNumber) as AllCWRData;
+          if (!record) {
+            i++;
+            continue;
+          }
 
           this.updateStatistics(record);
 
-          // Process record based on type
+          if (
+            'transactionSequenceNumber' in record &&
+            typeof record.transactionSequenceNumber === 'number'
+          ) {
+            const sequence = record.transactionSequenceNumber;
+
+            if (
+              currentTransaction &&
+              currentSequenceNumber !== null &&
+              currentSequenceNumber !== sequence
+            ) {
+              // Push previous transaction
+              currentGroup?.transactions?.push(currentTransaction);
+              currentTransaction = null;
+            }
+
+            currentSequenceNumber = sequence;
+          }
+
           switch (record.recordType) {
             case 'HDR':
-              result.header = record as CWRParsedRecord<HDRData>;
+              result.hdr.fields = record as HDRData;
               break;
 
             case 'GRH':
-              if ('versionNumber' in record.data) {
-                result.version = (
-                  record as CWRParsedRecord<GRHData>
-                ).data.versionNumber;
+              if ('versionNumber' in record) {
+                result.version = (record as GRHData).versionNumber;
               }
-              currentGroup = {
-                header: record as CWRParsedRecord<GRHData>,
+              result.groups.push({
+                grh: { fields: record as GRHData },
+                grt: { fields: null },
                 transactions: [],
-                trailer: null,
-              };
-              result.groups.push(currentGroup);
-              currentTransaction = null;
+              });
               break;
 
             case 'GRT':
-              if (currentGroup) {
-                currentGroup.trailer = record as CWRParsedRecord<GRTData>;
+              // Push final transaction
+              if (currentTransaction && currentGroup) {
+                currentGroup.transactions?.push(currentTransaction);
+                currentTransaction = null;
+                currentSequenceNumber = null;
               }
-              break;
-
-            case 'ACK':
-            case 'MSG':
-              // TODO
-              continue;
-
-            case 'NWR':
-              // These are transaction records that start a new work
               if (currentGroup) {
-                currentTransaction = {
-                  header: record as CWRParsedRecord<NWRData>,
-                  publishers: [],
-                  otherPublishers: [],
-                  writers: [],
-                  otherWriters: [],
-                  alternativeTitles: [],
-                  performers: [],
-                  recordings: [],
-                  originators: [],
-                  workTitles: [],
-                  versions: [],
-                };
-                currentGroup.transactions.push(currentTransaction);
-              }
-            case 'REV':
-              // These are transaction records that start a new work
-              if (currentGroup) {
-                currentTransaction = {
-                  header: record as CWRParsedRecord<REVData>,
-                  publishers: [],
-                  otherPublishers: [],
-                  writers: [],
-                  otherWriters: [],
-                  alternativeTitles: [],
-                  performers: [],
-                  recordings: [],
-                  originators: [],
-                  workTitles: [],
-                  versions: [],
-                };
-                currentGroup.transactions.push(currentTransaction);
+                currentGroup.grt = { fields: record as GRTData };
               }
               break;
 
             case 'TRL':
-              result.trailer = record as CWRParsedRecord<TRLData>;
+              result.trl.fields = record as TRLData;
               break;
 
-            default:
-              // Add records to current transaction
+            case 'ACK':
+              if (!currentTransaction) currentTransaction = {};
+              currentTransaction.ack = { fields: record as ACKData };
+              break;
+
+            case 'MSG':
               if (currentTransaction) {
-                switch (record.recordType) {
-                  case 'SPU':
-                    currentTransaction.publishers.push(
-                      record as CWRParsedRecord<SPUData>
-                    );
-                    break;
-                  case 'OPU':
-                    currentTransaction.otherPublishers.push(
-                      record as CWRParsedRecord<OPUData>
-                    );
-                    break;
-                  case 'SPT':
-                    // SPT records are publisher (SPU) territory records, add to publishers
-                    if (currentTransaction.publishers.length > 0) {
-                      const lastPublisher =
-                        currentTransaction.publishers[
-                          currentTransaction.publishers.length - 1
-                        ];
-                      if (!lastPublisher.territories) {
-                        lastPublisher.territories = [];
-                      }
-                      lastPublisher.territories.push(
-                        record as CWRParsedRecord<SPTData>
-                      );
-                    }
-                    break;
-                  case 'OPT':
-                    // OPT records are other publisher (OPU) territory records, add to otherPublishers
-                    if (currentTransaction.otherPublishers.length > 0) {
-                      const lastPublisher =
-                        currentTransaction.otherPublishers[
-                          currentTransaction.otherPublishers.length - 1
-                        ];
-                      if (!lastPublisher.territories) {
-                        lastPublisher.territories = [];
-                      }
-                      lastPublisher.territories.push(
-                        record as CWRParsedRecord<OPTData>
-                      );
-                    }
-                    break;
-                  case 'PWR':
-                    // SPU reocrds indicate which writer the publisher belongs to
-                    if (currentTransaction.writers.length > 0) {
-                      const lastWriter =
-                        currentTransaction.writers[
-                          currentTransaction.writers.length - 1
-                        ];
-                      if (!lastWriter.publishers) {
-                        lastWriter.publishers = [];
-                      }
-                      lastWriter.publishers.push(
-                        record as CWRParsedRecord<PWRData>
-                      );
-                    }
-                    break;
-                  case 'SWT':
-                    // SWT reocrds holds territory information for writers
-                    if (currentTransaction.writers.length > 0) {
-                      const lastWriter =
-                        currentTransaction.writers[
-                          currentTransaction.writers.length - 1
-                        ];
-                      if (!lastWriter.territories) {
-                        lastWriter.territories = [];
-                      }
-                      lastWriter.territories.push(
-                        record as CWRParsedRecord<SWTData>
-                      );
-                    }
-                    break;
-                  case 'OWT':
-                    // OWT (optional) reocrds holds territory information for otherWriters
-                    if (currentTransaction.otherWriters.length > 0) {
-                      const lastWriter =
-                        currentTransaction.otherWriters[
-                          currentTransaction.otherWriters.length - 1
-                        ];
-                      if (!lastWriter.territories) {
-                        lastWriter.territories = [];
-                      }
-                      lastWriter.territories.push(
-                        record as CWRParsedRecord<OWTData>
-                      );
-                    }
-                    break;
-                  case 'SWR':
-                    currentTransaction.writers.push(
-                      record as CWRParsedRecord<SWRData>
-                    );
-                    break;
-                  case 'OWR':
-                    currentTransaction.otherWriters.push(
-                      record as CWRParsedRecord<OWRData>
-                    );
-                    break;
-                  case 'ALT':
-                  case 'NAT': // considering adding a different category later on
-                    currentTransaction.alternativeTitles.push(
-                      record as CWRParsedRecord<ALTData | NATData>
-                    );
-                    break;
-                  case 'PER':
-                    currentTransaction.performers.push(
-                      record as CWRParsedRecord<PERData>
-                    );
-                    break;
-                  case 'REC':
-                    currentTransaction.recordings.push(
-                      record as CWRParsedRecord<RECData>
-                    );
-                    break;
-                  case 'ORN':
-                    currentTransaction.originators.push(
-                      record as CWRParsedRecord<ORNData>
-                    );
-                    break;
-                  case 'VER':
-                    currentTransaction.versions.push(
-                      record as CWRParsedRecord<VERData>
-                    );
-                    break;
-                  case 'EWT':
-                    currentTransaction.workTitles.push(
-                      record as CWRParsedRecord<EWTData>
-                    );
-                    break;
-                  default:
-                    const errorMsg = `Line ${lineNumber}: Invalid Transaction or Record Type ${record.recordType}`;
-                    this.statistics.errors.push(errorMsg);
-                    if (this.options.strictMode) {
-                      throw new CWRError(errorMsg, 'ER', {
-                        type: record.recordType,
-                      });
-                    }
-                }
+                (currentTransaction.msgs ??= []).push({
+                  fields: record as MSGData,
+                });
+              }
+              break;
+
+            case 'NWR':
+            case 'REV':
+            case 'EXC':
+            case 'ISW': {
+              const typedRecord = record as
+                | NWRData
+                | REVData
+                | EXCData
+                | ISWData;
+              const workHeader = { header: { fields: typedRecord } };
+              if (!currentTransaction) currentTransaction = {};
+              currentTransaction.work = workHeader;
+              break;
+            }
+
+            default:
+              if (currentTransaction?.work) {
+                this.handleTransactionRecord(
+                  record,
+                  currentTransaction.work,
+                  lineNumber
+                );
               }
               break;
           }
+
+          i++;
         } catch (error: any) {
           const errorMsg = `Line ${lineNumber}: ${error.message}`;
           this.statistics.errors.push(errorMsg);
-
           if (this.options.strictMode) {
             throw new CWRError(errorMsg, 'PARSE_ERROR');
           }
+          i++;
         }
       }
 
@@ -360,7 +225,7 @@ class CWRParser {
   /**
    * Parse a single line of CWR data
    */
-  parseLine(line: string, lineNumber: number): CWRParsedRecord | null {
+  parseLine(line: string, lineNumber: number): AllCWRData | null {
     if (line.length < 3) {
       return null; // Skip empty or too short lines
     }
@@ -377,12 +242,7 @@ class CWRParser {
     try {
       const record = new RecordClass(this.options);
       record.parse(line);
-      return {
-        recordType,
-        lineNumber,
-        data: record.toJSON(),
-        ...(this.options.includeRawData && { rawData: line }),
-      };
+      return record.toJSON() as AllCWRData;
     } catch (error: any) {
       throw new CWRError(
         `Failed to parse ${recordType} record: ${error.message}`,
@@ -391,10 +251,248 @@ class CWRParser {
     }
   }
 
+  handleTransactionRecord(
+    record: AllCWRData,
+    currentWork: ParsedWork | undefined,
+    lineNumber: number
+  ) {
+    if (currentWork) {
+      switch (record.recordType) {
+        case 'SPU':
+          (currentWork.spus ??= []).push({ fields: record as SPUData });
+          break;
+        case 'OPU':
+          (currentWork.opus ??= []).push({ fields: record as OPUData });
+          break;
+        case 'NPN':
+          if (currentWork.spus) {
+            const currentSpu = currentWork.spus.at(-1);
+            if (currentSpu) {
+              currentSpu.npn = { fields: record as NPNData };
+            }
+          }
+          break;
+        case 'SPT':
+          if (currentWork.spus) {
+            const currentSpu = currentWork.spus.at(-1);
+            if (currentSpu) {
+              (currentSpu.spts ??= []).push({ fields: record as SPTData });
+            }
+          }
+          break;
+        case 'OPT':
+          // OPTs for SPUs come first, opus will not exist yet
+          if (currentWork.opus) {
+            const currentOpu = currentWork.opus.at(-1);
+            if (currentOpu) {
+              (currentOpu.opts ??= []).push({ fields: record as OPTData });
+            }
+          } else if (currentWork.spus) {
+            const currentSpu = currentWork.spus.at(-1);
+            if (currentSpu) {
+              (currentSpu.opts ??= []).push({ fields: record as OPTData });
+            }
+          }
+          break;
+        case 'SWR':
+          (currentWork.swrs ??= []).push({ fields: record as SWRData });
+          break;
+        case 'OWR':
+          (currentWork.owrs ??= []).push({ fields: record as OWRData });
+          break;
+        case 'NWN':
+          this.attachToMatchingWriter(
+            [currentWork.swrs, currentWork.owrs],
+            record.interestedPartyNumber,
+            (writer) => {
+              writer.nwn = { fields: record as NWNData };
+            }
+          );
+          break;
+        case 'SWT':
+          this.attachToMatchingWriter(
+            // SWT only belong with SWR not OWR
+            [currentWork.swrs, undefined],
+            record.interestedPartyNumber,
+            (writer) => {
+              //@ts-ignore
+              (writer.swts ??= []).push({ fields: record as SWTData });
+            }
+          );
+          break;
+        case 'OWT':
+          this.attachToMatchingWriter(
+            // OWT only belong with OWR not SWR
+            [undefined, currentWork.owrs],
+            record.interestedPartyNumber,
+            (writer) => {
+              //@ts-ignore
+              (writer.owts ??= []).push({ fields: record as OWTData });
+            }
+          );
+          break;
+        case 'PWR':
+          this.attachToMatchingWriter(
+            [currentWork.swrs, currentWork.owrs],
+            record.writerInterestedPartyNumber,
+            (writer) => {
+              (writer.pwrs ??= []).push({ fields: record as PWRData });
+            }
+          );
+          break;
+        case 'VER':
+          currentWork.ver = { fields: record as VERData };
+          break;
+        case 'REC':
+          currentWork.rec = { fields: record as RECData };
+          break;
+        case 'EWT':
+          currentWork.ewt = { fields: record as EWTData };
+          break;
+        case 'NET':
+          currentWork.net = { fields: record as NETData };
+          break;
+        case 'NVT':
+          currentWork.nvt = { fields: record as NVTData };
+          break;
+        case 'ALT':
+        case 'NAT':
+        case 'PER':
+        case 'NPR':
+        case 'ORN':
+        case 'INS':
+        case 'IND':
+        case 'COM':
+        case 'NCT':
+        case 'NOW':
+        case 'ARI':
+        case 'XRF':
+          const workArrayFields = {
+            ALT: 'alts',
+            NAT: 'nats',
+            PER: 'pers',
+            NPR: 'nprs',
+            REC: 'recs',
+            ORN: 'orns',
+            INS: 'inss',
+            IND: 'inds',
+            COM: 'coms',
+            NCT: 'ncts',
+            NOW: 'nows',
+            ARI: 'aris',
+            XRF: 'xrfs',
+          } as const;
+          if (record.recordType in workArrayFields) {
+            const key = workArrayFields[record.recordType];
+            ((currentWork as any)[key] ??= []).push({ fields: record });
+            break;
+          }
+          break;
+
+        default:
+          const errorMsg = `Line ${lineNumber}: Invalid Transaction or Record Type ${record.recordType}`;
+          this.statistics.errors.push(errorMsg);
+          if (this.options.strictMode) {
+            throw new CWRError(errorMsg, 'ER', {
+              type: record.recordType,
+            });
+          }
+      }
+    }
+  }
+
+  attachToMatchingWriter(
+    writerLists: [ParsedSWR[] | undefined, ParsedOWR[] | undefined],
+    ipNumber: string,
+    attach: (writer: ParsedSWR | ParsedOWR) => void
+  ) {
+    for (const list of writerLists) {
+      if (!list) continue;
+      const match = list.find(
+        (w) => w.fields.interestedPartyNumber === ipNumber
+      );
+      if (match) {
+        attach(match);
+        break;
+      }
+    }
+  }
+
+  groupSplits(transmission: ParsedTransmission) {
+    // const splits = [];
+
+    for (const group of transmission.groups) {
+      if (!group.transactions) continue;
+      for (const tx of group.transactions) {
+        if (tx.work?.spus) {
+          // const grouped = this.groupByField(
+          //   tx.work?.spus,
+          //   (spu) => spu.fields.publisherSequenceNumber
+          // );
+
+          const grouped = this.collapseSPUs(tx.work?.spus);
+          console.log(JSON.stringify(grouped, null, 2));
+          // const grouped2 = this.groupByField(grouped, spu => spu.fields.publisherSequenceNumber)
+          // splits.push(tx.work?.spus?.reduce(() => {}));
+        }
+      }
+    }
+  }
+
+  collapseSPUs(spus: ParsedSPU[]) {
+    const collapsed: Record<string, ParsedSPU> = {};
+    const result: ParsedSPU[] = [];
+
+    for (const item of spus) {
+      const { publisherType, interestedPartyNumber } = item.fields;
+
+      if (publisherType === 'E' && interestedPartyNumber) {
+        const key = interestedPartyNumber;
+
+        if (!collapsed[key]) {
+          // First time seeing this "E" type + IPN combo — clone it
+          collapsed[key] = { ...item, fields: { ...item.fields } };
+          result.push(collapsed[key]);
+        } else {
+          // Merge shares
+          const existing = collapsed[key].fields;
+          const incoming = item.fields;
+
+          existing.prOwnershipShare =
+            (existing.prOwnershipShare ?? 0) + (incoming.prOwnershipShare ?? 0);
+          existing.mrOwnershipShare =
+            (existing.mrOwnershipShare ?? 0) + (incoming.mrOwnershipShare ?? 0);
+          existing.srOwnershipShare =
+            (existing.srOwnershipShare ?? 0) + (incoming.srOwnershipShare ?? 0);
+        }
+      } else {
+        // Not type "E" — keep as-is
+        result.push(item);
+      }
+    }
+
+    return result;
+  }
+
+  groupByField<T>(
+    arr: T[],
+    fieldAccessor: (item: T) => string | number
+  ): Record<string, T[]> {
+    return arr.reduce(
+      (acc, item) => {
+        const key = String(fieldAccessor(item));
+        if (!acc[key]) acc[key] = [];
+        acc[key].push(item);
+        return acc;
+      },
+      {} as Record<string, T[]>
+    );
+  }
+
   /**
    * Update parsing statistics
    */
-  updateStatistics(record: CWRParsedRecord<AllCWRData>) {
+  updateStatistics(record: AllCWRData) {
     this.statistics.totalRecords++;
     const type = record.recordType;
     this.statistics.recordCounts[type] =

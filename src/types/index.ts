@@ -33,6 +33,7 @@ import { INSRecord } from '../records/INSRecord';
 import { INDRecord } from '../records/INDRecord';
 import { COMRecord } from '../records/COMRecord';
 import { MSGRecord } from '../records/MSGRecord';
+import { NPRRecord } from '../records/NPRRecord';
 
 export type RecordInstance =
   | InstanceType<typeof HDRRecord>
@@ -64,6 +65,7 @@ export type RecordInstance =
   | InstanceType<typeof EWTRecord>
   | InstanceType<typeof VERRecord>
   | InstanceType<typeof PERRecord>
+  | InstanceType<typeof NPRRecord>
   | InstanceType<typeof RECRecord>
   | InstanceType<typeof ORNRecord>
   | InstanceType<typeof INSRecord>
@@ -101,6 +103,7 @@ export type RecordTypeKey =
   | 'EWT'
   | 'VER'
   | 'PER'
+  | 'NPR'
   | 'REC'
   | 'ORN'
   | 'INS'
@@ -144,6 +147,7 @@ export type AllCWRData =
   | EWTData
   | VERData
   | PERData
+  | NPRData
   | RECData
   | ORNData
   | INSData
@@ -186,6 +190,23 @@ export interface ParsedCWRFile {
   };
 }
 
+export interface ParsedTransmission {
+  fileName: string;
+  version: string | null;
+  hdr: {
+    fields: HDRData | null;
+  };
+  groups: ParsedGroup[];
+  trl: {
+    fields: TRLData | null;
+  };
+  statistics: ParseStatistics | null;
+  metadata: {
+    parsedAt: string;
+    parser: string;
+  };
+}
+
 export interface CWRConverterRecord {
   fileName: string;
   version: string | null;
@@ -196,14 +217,88 @@ export interface CWRConverterRecord {
   };
 }
 
-// Group structure
+export interface ParsedGroup {
+  grh: {
+    fields: GRHData | null;
+  };
+  transactions?: ParsedTransaction[];
+  grt?: {
+    fields: GRTData | null;
+  };
+}
+
+// Group structure for Converter
 export interface CWRGroup {
   header: CWRParsedRecord<GRHData>;
   transactions: CWRTransaction[];
   trailer: CWRParsedRecord<GRTData> | null;
 }
 
-// Transaction structure
+export interface ParsedTransaction {
+  ack?: {
+    fields: ACKData;
+  };
+  msgs?: {
+    fields: MSGData;
+  }[];
+  work?: ParsedWork;
+}
+
+export interface ParsedWork {
+  header: {
+    fields: NWRData | REVData | EXCData | ISWData;
+  };
+  spus?: ParsedSPU[];
+  opus?: ParsedOPU[];
+  swrs?: ParsedSWR[];
+  owrs?: ParsedOWR[];
+  alts?: { fields: ALTData }[];
+  nats?: { fields: NATData }[];
+  ewt?: { fields: EWTData };
+  ver?: { fields: VERData };
+  pers?: { fields: PERData }[];
+  nprs?: { fields: NPRData }[];
+  rec?: { fields: RECData };
+  orns?: { fields: ORNData }[];
+  inss?: { fields: INSData }[];
+  inds?: { fields: INDData }[];
+  coms?: { fields: COMData }[];
+  net?: { fields: NETData };
+  ncts?: { fields: NCTData }[];
+  nvt?: { fields: NVTData };
+  nows?: { fields: NOWData }[];
+  aris?: { fields: ARIData }[];
+  xrfs?: { fields: XRFData }[];
+}
+
+export interface ParsedSPU {
+  fields: SPUData;
+  npn?: { fields: NPNData };
+  spts?: { fields: SPTData }[];
+  opts?: { fields: OPTData }[];
+}
+
+export interface ParsedOPU {
+  fields: OPUData;
+  npn?: NPNData;
+  opts?: { fields: OPTData }[];
+}
+
+export interface ParsedSWR {
+  fields: SWRData;
+  nwn?: { fields: NWNData };
+  swts?: { fields: SWTData }[];
+  pwrs?: { fields: PWRData }[];
+}
+
+export interface ParsedOWR {
+  fields: OWRData;
+  nwn?: { fields: NWNData };
+  owts?: { fields: OWTData }[];
+  pwrs?: { fields: PWRData }[];
+}
+
+// Transaction structure for Converter
 export interface CWRTransaction {
   header: CWRParsedRecord<NWRData | REVData>;
   publishers: CWRPublisher[];
@@ -561,6 +656,17 @@ export interface PERData {
   artistFirstName: string | null;
   ipiNameNumber: string | null;
   ipiBaseNumber: string | null;
+}
+
+export interface NPRData {
+  recordType: 'NPR';
+  performingArtistName: string | null;
+  performingArtistFirstName: string | null;
+  ipiNameNumber: string | null;
+  ipiBaseNumber: string | null;
+  languageCode: string | null;
+  performanceLanguage: string | null;
+  performanceDialect: string | null;
 }
 
 export interface RECData {
