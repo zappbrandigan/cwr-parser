@@ -258,7 +258,7 @@ export interface ParsedWork {
   ver?: { fields: VERData };
   pers?: { fields: PERData }[];
   nprs?: { fields: NPRData }[];
-  rec?: { fields: RECData };
+  recs?: { fields: RECData }[];
   orns?: { fields: ORNData }[];
   inss?: { fields: INSData }[];
   inds?: { fields: INDData }[];

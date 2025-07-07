@@ -17,7 +17,6 @@ import {
   SWRData,
   TRLData,
   OWRData,
-  RECData,
   NWRData,
   REVData,
   VERData,
@@ -343,9 +342,6 @@ class CWRParser {
         case 'VER':
           currentWork.ver = { fields: record as VERData };
           break;
-        case 'REC':
-          currentWork.rec = { fields: record as RECData };
-          break;
         case 'EWT':
           currentWork.ewt = { fields: record as EWTData };
           break;
@@ -357,6 +353,7 @@ class CWRParser {
           break;
         case 'ALT':
         case 'NAT':
+        case 'REC':
         case 'PER':
         case 'NPR':
         case 'ORN':
@@ -371,8 +368,8 @@ class CWRParser {
             ALT: 'alts',
             NAT: 'nats',
             PER: 'pers',
-            NPR: 'nprs',
             REC: 'recs',
+            NPR: 'nprs',
             ORN: 'orns',
             INS: 'inss',
             IND: 'inds',
