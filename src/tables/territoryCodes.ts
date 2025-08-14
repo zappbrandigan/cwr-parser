@@ -1,4 +1,5 @@
 export const territoryCodes = {
+  0: 'NS',
   4: 'AFGHANISTAN',
   8: 'ALBANIA',
   12: 'ALGERIA',
@@ -23,6 +24,7 @@ export const territoryCodes = {
   84: 'BELIZE',
   90: 'SOLOMON ISLANDS',
   96: 'BRUNEI DARUSSALAM',
+  99: 'NS',
   100: 'BULGARIA',
   104: 'BURMA/MYANMAR',
   108: 'BURUNDI',
