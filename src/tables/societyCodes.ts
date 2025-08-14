@@ -1,4 +1,5 @@
 export const societyCodes = {
+  0: 'NS',
   1: 'ACUM',
   2: 'ADDAF',
   3: 'AEPI',
@@ -97,6 +98,7 @@ export const societyCodes = {
   96: 'COTT',
   97: 'ZAIKS',
   98: 'ZIMURA',
+  99: 'NS',
   101: 'SOCAN',
   102: 'NASCAM',
   103: 'ACDAM',
